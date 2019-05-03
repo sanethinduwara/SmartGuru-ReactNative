@@ -57,12 +57,13 @@ export default class CheckBoxGroup extends React.Component {
 
                 <TouchableOpacity onPress={this.props.onPress(this.values)}>
 
-                    <CheckBox
+                    {this.props.labels[0] !== "" ?<CheckBox
                         title={this.props.labels[0]}
                         textStyle={{fontWeight: 'normal'}}
                         checked={this.state.checked[0]}
                         checkedColor='#FF0000'
                         uncheckedColor='#FF0000'
+                        containerStyle = {{borderColor: '#fff'}}
                         checkedIcon={<Icon
                             name='check-square'
                             type='font-awesome'
@@ -80,13 +81,15 @@ export default class CheckBoxGroup extends React.Component {
                             //console.log("this.state.checked", this.state.checked);
                             this.get_values();
                         }}
-                    />
-                    <CheckBox
+                    />:null}
+
+                    {this.props.labels[1] !== "" ?<CheckBox
                         title={this.props.labels[1]}
                         textStyle={{fontWeight: 'normal'}}
                         checked={this.state.checked[1]}
                         checkedColor='#FF0000'
                         uncheckedColor='#FF0000'
+                        containerStyle = {{borderColor: '#fff'}}
                         checkedIcon={<Icon
                             name='check-square'
                             type='font-awesome'
@@ -102,13 +105,15 @@ export default class CheckBoxGroup extends React.Component {
                             this.setState({checked: this.checked});
                             this.get_values();
                         }}
-                    />
-                    <CheckBox
+                    />:null}
+
+                    {this.props.labels[2] !== "" ?<CheckBox
                         title={this.props.labels[2]}
                         textStyle={{fontWeight: 'normal'}}
                         checked={this.state.checked[2]}
                         checkedColor='#FF0000'
                         uncheckedColor='#FF0000'
+                        containerStyle = {{borderColor: '#fff'}}
                         checkedIcon={<Icon
                             name='check-square'
                             type='font-awesome'
@@ -124,13 +129,15 @@ export default class CheckBoxGroup extends React.Component {
                             this.setState({checked: this.checked});
                             this.get_values();
                         }}
-                    />
-                    <CheckBox
+                    />:null}
+
+                    {this.props.labels[3] !== "" ?<CheckBox
                         title={this.props.labels[3]}
                         textStyle={{fontWeight: 'normal'}}
                         checked={this.state.checked[3]}
                         checkedColor='#FF0000'
                         uncheckedColor='#FF0000'
+                        containerStyle = {{borderColor: '#fff'}}
                         checkedIcon={<Icon
                             name='check-square'
                             type='font-awesome'
@@ -146,13 +153,15 @@ export default class CheckBoxGroup extends React.Component {
                             this.setState({checked: this.checked});
                             this.get_values();
                         }}
-                    />
+                    />:null}
+
                     {this.props.labels[4] !== "" ? <CheckBox
                         title={this.props.labels[4]}
                         textStyle={{fontWeight: 'normal'}}
                         checked={this.state.checked[4]}
                         checkedColor='#FF0000'
                         uncheckedColor='#FF0000'
+                        containerStyle = {{borderColor: '#fff'}}
                         checkedIcon={<Icon
                             name='check-square'
                             type='font-awesome'
