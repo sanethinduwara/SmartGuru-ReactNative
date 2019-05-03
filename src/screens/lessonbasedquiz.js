@@ -1,15 +1,13 @@
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import React from 'react';
 import {
     View,
-    Button,
     ListView,
     ActivityIndicator,
     Text,
-    Alert,
     StyleSheet,
     Platform,
-    TouchableOpacity
+    TouchableOpacity,
+    ScrollView
 } from 'react-native';
 import CheckBoxGroup from '../elements/checkboxgroup'
 import {CheckBox, Icon} from "react-native-elements";
@@ -22,7 +20,7 @@ export default class Quiz extends React.Component {
     score = 0;
 
     static navigationOptions = {
-        title: 'Quiz',
+        title: "Quiz",
     };
     //filtered_qs = [];
     user_answers = [];
@@ -73,7 +71,10 @@ export default class Quiz extends React.Component {
                         difficulty: responseJson[i].difficulty
                     });
 
+                    console.log("questions length", this.questions.length);
+
                     this.user_answers.push({qsId: responseJson[i].qs_id, answer: ' '});
+                    console.log("user answers length", this.user_answers.length);
                     //console.log("qs id", responseJson[i].qs_id);
                     //console.log("op1", responseJson[i].options.op1);
                     //console.log("op2", responseJson[i].options.op2);
@@ -199,20 +200,34 @@ export default class Quiz extends React.Component {
     };
 
     fill_user_answer = (question, answers)=>{
-        //var question_ori = question;
-        var starting_index = question.indexOf("_");
-        var qs_new = question.replace(/_/g, '');
-        var p1 = qs_new.slice(0, starting_index);
-        var p2 = qs_new.slice(starting_index, qs_new.length);
+
+        var starting_index = question.indexOf("_");     //getting starting index of underlined space
+
+        if (starting_index!==-1){       //if '_' found in the question
+            var qs_new = question.replace(/_/g, '');        //removing all '_' from the question
+            var p1 = qs_new.slice(0, starting_index);
+            var p2 = qs_new.slice(starting_index, qs_new.length);
+
+            return (
+                <View style={styles.qsDesc2}>
+                    <Text>{p1}
+                        <Text style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>{answers.join(", ")}</Text>
+                        {p2}</Text>
+                </View>
+            )
+        }else {     //if '_' not found in the question
+            return (
+                <View style={styles.qsDesc2}>
+                    <Text>{question}</Text>
+                    <Text style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>{answers.join(", ")}</Text>
+
+                </View>
+            )
+        }
+
 
         //return p1 + answers.join(", ") + p2;
-        return (
-            <View style={styles.qsDesc2}>
-                <Text>{p1}
-                    <Text style={{textDecorationLine: 'underline', fontWeight: 'bold'}}>{answers.join(", ")}</Text>
-                    {p2}</Text>
-            </View>
-        )
+
 
     };
 
@@ -236,41 +251,44 @@ export default class Quiz extends React.Component {
             return (
 
 
-                <View style={styles.qsContainer}>
+                <ScrollView style={{flex:1, alignSelf: 'center'}}>
+                    <View style={styles.qsContainer}>
 
 
-                    <Text>{this.questions[this.state.qsIndex].qsTopic}</Text>
-                    <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text>
-                    <Text style={styles.qsDesc}>{this.questions[this.state.qsIndex].question}</Text>
+                        <Text style={styles.qsTopic}>{this.questions[this.state.qsIndex].qsTopic}</Text>
+                        <View style={styles.hor}/>
+                        <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text>
+                        <Text style={styles.qsDesc}>{this.questions[this.state.qsIndex].question}</Text>
 
-                    <CheckBoxGroup
-                        labels={this.qs_options}
-                        uncheckAll={true}
-                        onPress={(checked) => {
-                            this.on_click2(checked);
-                        }}
-                    >
+                        <CheckBoxGroup
+                            labels={this.qs_options}
+                            uncheckAll={true}
+                            onPress={(checked) => {
+                                this.on_click2(checked);
+                            }}
+                        >
 
-                    </CheckBoxGroup>
+                        </CheckBoxGroup>
 
-                    <TouchableOpacity
-                        style={styles.SubmitButton}
-                        onPress={() => {
-                            this.check_answers();
-                            this.display_question();
-                            this.setState({
-                                checked: [false, false, false, false, false],
-                            });
-                        }
+                        <TouchableOpacity
+                            style={styles.SubmitButton}
+                            onPress={() => {
+                                this.check_answers();
+                                this.display_question();
+                                this.setState({
+                                    checked: [false, false, false, false, false],
+                                });
+                            }
 
 
-                        }
-                    >
-                        <Text
-                            style={styles.SubmitText}> {this.state.qsIndex < this.questions.length - 1 ? "Next" : "Submit"} </Text>
-                    </TouchableOpacity>
+                            }
+                        >
+                            <Text style={styles.SubmitText}>{this.state.qsIndex < this.questions.length - 1 ? "Next" : "Submit"}</Text>
+                        </TouchableOpacity>
 
-                </View>
+                    </View>
+                </ScrollView>
+
             );
         } else {
             let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -278,53 +296,59 @@ export default class Quiz extends React.Component {
             this.send_to_server();
             return (
                 <View style={styles.MainContainer}>
+                    <ScrollView>
+                        <View style={styles.qsContainer}>
+                            <View style={{alignItems: 'center'}}>
+                                <Text style={{fontSize:30, fontWeight:'bold'}}>Your Score</Text>
+                                <View style={styles.hr}/>
+                                <Text style={styles.scoreLabel}>{this.score}</Text>
+                            </View>
 
-                    <View style={styles.qsContainer}>
-                        <View style={{alignItems: 'center'}}>
-                            <Text style={{fontSize:30, fontWeight:'bold'}}>Your Score</Text>
-                            <View style={styles.hr}/>
-                            <Text style={styles.scoreLabel}>{this.score}</Text>
                         </View>
+                        <ListView
 
-                    </View>
-                    <ListView
+                            dataSource={dataSource}
 
-                        dataSource={dataSource}
+                            renderSeparator={this.ListViewItemSeparator}
 
-                        renderSeparator={this.ListViewItemSeparator}
+                            renderRow={(rowData, sectionID, rowID, higlightRow) => (
 
-                        renderRow={(rowData, sectionID, rowID, higlightRow) => (
-
-                            (
+                                (
 
 
-                                <View style={styles.qsContainer}>
+                                    <ScrollView>
+                                        <View style={styles.qsContainer}>
 
-                                    <Text style={styles.qsNoLabel}>Question {parseInt(rowID)+1}</Text>
-                                    {this.fill_user_answer(rowData.question, this.user_answers[rowID].answer)}
-                                    {this.arraysEqual(rowData.answer, this.user_answers[rowID].answer) ?
-                                        <View style={{flex: 1, flexDirection: 'row', marginTop:10}}><Icon
-                                            name='check-circle'
-                                            type='font-awesome'
-                                            color='green'
-                                            size={28}/>
-                                            <Text style={{lineHeight: 22, fontWeight: 'bold'}}> Correct</Text>
-                                        </View> :
-                                        <View style={{flex: 1, flexDirection: 'row'}}>
+                                            <Text style={styles.qsNoLabel}>Question {parseInt(rowID)+1}</Text>
+                                            {this.fill_user_answer(rowData.question, this.user_answers[rowID].answer)}
+                                            {this.arraysEqual(rowData.answer, this.user_answers[rowID].answer) ?
+                                                <View style={{flex: 1, flexDirection: 'row', marginTop:10}}><Icon
+                                                    name='check-circle'
+                                                    type='font-awesome'
+                                                    color='green'
+                                                    size={28}/>
+                                                    <Text style={{lineHeight: 22, fontWeight: 'bold'}}> Correct</Text>
+                                                </View> :
+                                                <View style={{flex: 1, flexDirection: 'row'}}>
 
-                                            <Icon
-                                                name='times-circle'
-                                                type='font-awesome'
-                                                color='#ff1c1c'
-                                                size={28}/><Text style={{lineHeight: 22, fontWeight: 'bold'}}> Wrong</Text></View>}
+                                                    <Icon
+                                                        name='times-circle'
+                                                        type='font-awesome'
+                                                        color='#ff1c1c'
+                                                        size={28}/><Text style={{lineHeight: 22, fontWeight: 'bold'}}> Wrong</Text></View>}
 
 
-                                </View>
+                                        </View>
+                                    </ScrollView>
+
+                                )
                             )
-                        )
-                        }
+                            }
 
-                    />
+                        />
+                    </ScrollView>
+
+
                 </View>
             );
         }
@@ -367,6 +391,7 @@ export default class Quiz extends React.Component {
         this.chapter_name = params.chapter;
         this.quizLevel = params.level;
 
+
         //this.get_filtered_qs();
 
         console.log("questions.length ", this.questions.length);
@@ -379,7 +404,7 @@ export default class Quiz extends React.Component {
         if (this.state.isLoading) {
             return (
                 <View style={{flex: 1, paddingTop: 20}}>
-                    <ActivityIndicator/>
+                    <ActivityIndicator style={{flex:1, justifyContent:'center'}}/>
                 </View>
             );
         }
@@ -388,14 +413,7 @@ export default class Quiz extends React.Component {
 
             <View style={styles.MainContainer}>
 
-
                 {this.display_question()}
-
-
-                <Text>
-                    {this.state.answerStatus}
-                </Text>
-
 
             </View>
         );
@@ -414,6 +432,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: (Platform.OS === 'ios') ? 20 : 0,
         backgroundColor: '#e7e9e4',
+        alignItems:'center'
         //padding: 5,
     },
 
@@ -443,14 +462,14 @@ const styles = StyleSheet.create({
         shadowOpacity: 0,
         shadowOffset: {width: 12, height: 12,},
         margin: 10,
-        elevation: 4
+        elevation: 4,
+        width: "100%",
     },
     SubmitButton: {
         backgroundColor: '#ff0000',
         justifyContent: 'center',
         alignSelf: 'stretch',
-        paddingTop: 20,
-        paddingBottom: 10,
+        paddingVertical: 10,
         paddingLeft: 15,
         paddingRight: 15,
         marginTop: 10,
@@ -462,6 +481,13 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#fff'
     },
+    qsTopic:{
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginTop:5,
+        color: '#8d8d8d'
+
+    },
     scoreLabel:{
         fontSize:50,
         fontWeight:'bold',
@@ -471,11 +497,13 @@ const styles = StyleSheet.create({
         color: 'white',
         marginTop:20
     },
-    hr:{
-        marginTop:10,
-        backgroundColor: '#e1e1e1',
-        height: 1,
-        width: '100%'
+    hor:{
+        height: 0.5,
+        width: "100%",
+        backgroundColor: "#777777",
+        marginTop: 20,
+        alignItems: 'stretch',
+        marginBottom:30
     }
 
 });
