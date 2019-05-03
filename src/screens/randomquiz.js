@@ -13,14 +13,14 @@ import CheckBoxGroup from '../elements/checkboxgroup'
 import {CheckBox, Icon} from "react-native-elements";
 
 
-export default class Quiz extends React.Component {
+export default class RandomQuiz extends React.Component {
 
     chapter_name = "";
     quizLevel = "";
     score = 0;
 
     static navigationOptions = {
-        title: 'Recommended Quiz',
+        title: "Random Quiz",
     };
     //filtered_qs = [];
     user_answers = [];
@@ -49,7 +49,7 @@ export default class Quiz extends React.Component {
 
     componentDidMount() {
 
-        const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/recommended/quiz`;
+        const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/random`;
         return fetch(URL)
             .then((response) => response.json())
             .then((responseJson) => {
@@ -386,7 +386,6 @@ export default class Quiz extends React.Component {
 
 
     render() {
-
 
 
         //this.get_filtered_qs();

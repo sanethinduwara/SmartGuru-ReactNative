@@ -29,6 +29,10 @@ class YouTube extends React.Component {
 
 export default class Video extends React.Component {
 
+  static navigationOptions = {
+    title: "Recommended"
+  };
+
   render() {
 
     return (

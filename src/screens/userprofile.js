@@ -1,5 +1,15 @@
 import React from 'react';
-import {View, StyleSheet, Dimensions, WebView, Text, Image, Platform, processColor} from 'react-native';
+import {
+    View,
+    StyleSheet,
+    Dimensions,
+    WebView,
+    Text,
+    Image,
+    Platform,
+    processColor,
+    ActivityIndicator, TouchableOpacity
+} from 'react-native';
 import {StackNavigator, SafeAreaView} from 'react-navigation';
 import {PieChart} from 'react-native-svg-charts'
 import {CheckBox, Icon} from "react-native-elements";
@@ -9,6 +19,7 @@ export default class UserProfile extends React.Component {
     keys = [];
     values = [];
     colors = [];
+
     static navigationOptions = {
         title: 'Profile',
     };
@@ -20,12 +31,50 @@ export default class UserProfile extends React.Component {
                 label: '',
                 value: 0
             },
-            labelWidth: 0
+            labelWidth: 0,
+            isLoading:true
         }
     }
 
     componentDidMount() {
 
+        const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/performance/1`;
+        return fetch(URL)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                //let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+
+                for (var i = 0; i < responseJson.scores.length; i++) {
+                    //adding questions to question array
+                    this.keys.push(responseJson.scores[i].chapter);
+                    this.values.push(responseJson.scores[i].chapterScore);
+
+                    console.log("chapter",responseJson.scores[i].chapter)
+                    console.log("score",responseJson.scores[i].chapterScore)
+
+                    //this.user_answers.push({qsId: responseJson[i].qs_id, answer: ' '});
+                    //console.log("qs id", responseJson[i].qs_id);
+                    //console.log("op1", responseJson[i].options.op1);
+                    //console.log("op2", responseJson[i].options.op2);
+                    //console.log("op3", responseJson[i].options.op3);
+                    //console.log("op4", responseJson[i].options.op4);
+
+
+                }
+
+                this.setState({
+                    isLoading:false,
+                    selectedSlice: {label: this.keys[0],value: this.values[0]},
+                });
+
+
+                //this.keys = responseJson.scores;
+                //console.log("test 45 ", responseJson.scores)
+
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     showIndications = (array) => {
@@ -37,7 +86,7 @@ export default class UserProfile extends React.Component {
                         type='font-awesome'
                         color={this.colors[index]}
                         size={20}/>
-                    <Text style={{marginLeft: 5}}>{key}</Text>
+                    <Text style={{marginLeft: 5, marginRight: 5, width:120, fontSize: 12}}>{key}</Text>
                 </View>
             )
         })
@@ -47,21 +96,29 @@ export default class UserProfile extends React.Component {
         const {labelWidth, selectedSlice} = this.state;
         const {label, value} = selectedSlice;
 
-        this.keys = ['Introduction', 'Loops', 'Selections', 'Methods', 'Arrays'];
-        this.values = [10, 50, 20, 40, 20];
-        this.colors = ['#4466c6', '#e93850', '#f8a105', '#8cc63f', '#169d93'];
+
+
+
+
+        //this.keys = ['Introduction', 'Loops', 'Selections', 'Methods', 'Arrays'];
+        this.values = [80, 10, 40, 50, 30];
+        this.colors = ['#4466c6', '#e93850', '#f8a105', '#8cc63f', '#169d93', '#671e46', '#8fc1ed', '#5a403a', '#d34380', '#5f5535'];
 
         const data = this.keys.map((key, index) => {
             return {
                 key,
                 value: this.values[index],
                 svg: {fill: this.colors[index]},
-                arc: {outerRadius: (70 + this.values[index]) + '%', padAngle: label === key ? 0.1 : 0},
-                //onPress: () => this.setState({ selectedSlice: { label: key, value: values[index] } })
+                arc: {padAngle: label === key ? 0.1 : 0},
+
+                onPress: () => {
+                    this.setState({ selectedSlice: { label: key, value: this.values[index] } })
+                },
 
 
             }
         });
+
         const deviceWidth = Dimensions.get('window').width;
 
         return (
@@ -71,23 +128,41 @@ export default class UserProfile extends React.Component {
                         style={styles.ProfileImage}
                         source={{uri: 'https://facebook.github.io/react-native/docs/assets/favicon.png'}}
                     />
-                    <Text style={styles.ProfileName}>Saneth Induwara</Text>
+                    <View style={{marginLeft: 20, justifyContent: 'center'}}>
+                        <Text style={styles.ProfileName}>Saneth Induwara</Text>
+                        <TouchableOpacity
+                            style={styles.buttonOutline}
+                            onPress={() => {}}>
+                            <Text>Edit Profile</Text>
+                        </TouchableOpacity>
+                    </View>
+
                 </View>
                 <View style={styles.CardView}>
-                    <Text>Skills</Text>
+                    <Text style={styles.title}>Skills</Text>
+
                     <View style={styles.HorizontalLine}/>
-                    <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                    {this.state.isLoading?<ActivityIndicator style={{marginTop:20}}/>:<View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{height: 250, width:250, alignItems: 'center'}}>
                         <PieChart
-                            style={{height: 250, width: 250}}
+                            style={{height: 250, width:250}}
                             outerRadius={'80%'}
                             innerRadius={'45%'}
                             data={data}
                         />
+                        <Text
 
-                        <View style={{marginLeft: 10}}>
+                            style={{position: 'absolute', top: '45%', fontSize:20, bottom: 0, justifyContent: 'center', alignItems: 'center', alignSelf:'center', fontWeight:'bold'}}>
+                            {`${value}`}%
+                        </Text>
+                        </View>
+
+
+                        <View style={{marginLeft: 10, marginRight: 10, marginTop:25}}>
                             {this.showIndications(this.keys)}
                         </View>
-                    </View>
+                    </View>}
+
                 </View>
             </View>
         );
@@ -104,20 +179,26 @@ const styles = StyleSheet.create({
         //padding: 5,
     },
     ProfileImage: {
-        width: 100,
-        height: 100,
+        width: 120,
+        height: 120,
         marginTop: 10,
-        borderRadius: 100
+        borderRadius: 100,
+
     },
     ProfileName: {
         fontSize: 18,
-        marginTop: 5
+        marginTop: 5,
+        fontWeight:'bold'
+
     },
     DetailContainer: {
         alignItems: 'center',
         backgroundColor: '#d5d5d5',
         padding: 10,
-        width: "100%"
+        paddingVertical: 50,
+        width: "100%",
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
     CardView: {
         width: "100%",
@@ -146,5 +227,18 @@ const styles = StyleSheet.create({
     },
     indicationRow: {
         flexDirection: 'row'
+    },
+    title: {
+        fontSize :20,
+        fontWeight: 'bold'
+    },
+    buttonOutline:{
+        borderRadius:20,
+        borderWidth:1,
+        borderColor:'#a5a5a5',
+        paddingVertical: 7,
+        paddingHorizontal: 15,
+        alignSelf:'baseline',
+        marginTop:5
     }
 });
