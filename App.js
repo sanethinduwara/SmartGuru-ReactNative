@@ -1,106 +1,171 @@
-import React from 'react';
-import {View, Text, Button, StyleSheet, Platform} from 'react-native';
-import {createAppContainer, createStackNavigator, StackActions, NavigationActions} from 'react-navigation'; // Version can be specified in package.json
+import React, {Component} from 'react';
+import {StyleSheet, Text, View, TouchableHighlight, Image, TextInput, Alert} from "react-native";
+import {createStackNavigator, createAppContainer} from "react-navigation";
+import {createMaterialBottomTabNavigator} from "react-navigation-material-bottom-tabs";
 import Video from './src/screens/video';
 import Lessons from './src/screens/lessons';
 import LessonBasedQuiz from "./src/screens/lessonbasedquiz";
 import UserProfile from "./src/screens/userprofile";
-import QuizLevelSelector from "./src/screens/difficultylevel"
+import Login from "./src/screens/login";
+import Test from "./src/screens/test";
 import RecommendedQuiz from "./src/screens/recommendedquiz"
+import RandomQuiz from "./src/screens/randomquiz"
+
+import QuizSelector from "./src/screens/quizselector"
+import {Icon} from "react-native-elements";
 
 
-class HomeScreen extends React.Component {
-    render() {
-        return (
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                <Text>Smart Guru</Text>
-                <Button
-                    title="Lessons"
-                    color={'#FF0000'}
-                    style={styles.qsNoLabel}
-                    onPress={() => this.props.navigation.push('Lessons')}
-                />
-                <Button
-                    title="Recommended Quiz"
-                    onPress={() => this.props.navigation.push('RecommendedQuiz')}
-                />
-                <Button
-                    title="User Profile"
-                    onPress={() => this.props.navigation.push('UserProfile')}
-                />
-                <Button
-                    title="Video"
-                    onPress={() => this.props.navigation.push('Video')}
-                />
 
-            </View>
-        );
-    }
-}
-
-class DetailsScreen extends React.Component {
-    render() {
-        return (
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                <Text>Details Screen</Text>
-            </View>
-        );
-    }
-}
-
-const AppNavigator = createStackNavigator({
-    Home: {
-        screen: HomeScreen,
+const QuizzesStack = createStackNavigator({
+    QuizSelector: {
+        screen: QuizSelector
     },
-    Video: {
-        screen: Video,
-    },
-    RecommendedQuiz: {
-        screen: RecommendedQuiz,
+    Lessons: {
+        screen: Lessons
     },
     LessonBasedQuiz: {
-        screen: LessonBasedQuiz,
+        screen: LessonBasedQuiz
     },
+    RecommendedQuiz: {
+        screen: RecommendedQuiz
+    },
+    RandomQuiz: {
+        screen: RandomQuiz
+    }
+
+});
+const VidStack = createStackNavigator({
+    Video:{
+        screen: Video
+    }
+});
+
+const ProfileStack = createStackNavigator({
     UserProfile: {
-        screen: UserProfile,
-    },
-    QuizLevelSelector: {
-        screen: QuizLevelSelector,
-    },
+        screen: UserProfile
+    }
+});
+const BottomStack = createMaterialBottomTabNavigator(
+    {
+        Quizzes: {
+            screen: QuizzesStack,
+            navigationOptions: {
+                tabBarIcon: ({tintColor, focused}) => (
+                    <Icon
+                        name='book-open'
+                        type='feather'
+                        color={tintColor}
+                        size={25}/>
+                ),
+                title: 'Quizzes'
+            }
+        },
+        Video: {
+            screen: VidStack,
+            navigationOptions: {
+                tabBarIcon: ({tintColor, focused}) => (
+                    <Icon
+                        name='youtube'
+                        type='feather'
+                        color={tintColor}
+                        size={25}/>
+                )
+            }
+        },
+        Test: {
+            screen: Test,
+            navigationOptions: {
+                tabBarIcon: ({tintColor, focused}) => (
+                    <Icon
+                        name='comment-o'
+                        type='font-awesome'
+                        color={tintColor}
+                        size={24}/>
+                )
+            }
+        },
+        UserProfile: {
+            screen: ProfileStack,
+            navigationOptions: {
+                tabBarIcon: ({tintColor, focused}) => (
+                    <Icon
+                        name='user-o'
+                        type='font-awesome'
+                        color={tintColor}
+                        size={25}/>
+                )
+            }
+        },
 
-    Lessons: {
-        screen: Lessons,
+    },
+    {
+        initialRouteName: "Quizzes",
+        activeColor: '#f61e44',
+        inactiveColor: '#626061',
+        barStyle: {backgroundColor: "#ffffff"},
+        labeled: false
+    }
+);
+
+const AppNavigator = createStackNavigator({
+    Login: {
+        screen: Login
+    },
+    HomeScreen: {
+        screen: BottomStack,
         navigationOptions: () => ({
-            title: 'Lessons',
+            header: null,
+            //headerLeft: null
         }),
-    },
-}, {
-    initialRouteName: 'Home',
-});
-
-const styles = StyleSheet.create({
-
-    MainContainer: {
-
-        // Setting up View inside content in Vertically center.
-        justifyContent: 'center',
-        flex: 1,
-        paddingTop: (Platform.OS === 'ios') ? 20 : 0,
-        backgroundColor: '#e7e9e4',
-        padding: 5,
-    },
-
-    qsNoLabel: {
-        backgroundColor: '#ff0000',
-        alignSelf: 'baseline',
-        paddingTop: 5,
-        paddingBottom: 5,
-        paddingLeft: 15,
-        paddingRight: 15,
-        borderRadius: 20,
-        fontSize: 16,
-        color: '#fff'
-    },
-});
+    }
+}, {initialRouteName: 'Login'});
 
 export default createAppContainer(AppNavigator);
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    inputContainer: {
+        borderBottomColor: '#F5FCFF',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 30,
+        borderBottomWidth: 1,
+        width: 250,
+        height: 45,
+        marginBottom: 20,
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    inputs: {
+        height: 45,
+        marginLeft: 16,
+        borderBottomColor: '#FFFFFF',
+        flex: 1,
+    },
+    inputIcon: {
+        width: 30,
+        height: 30,
+        marginLeft: 15,
+        justifyContent: 'center'
+    },
+    buttonContainer: {
+        height: 45,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+        width: 250,
+        borderRadius: 30,
+    },
+    loginButton: {
+        backgroundColor: "#00b5ec",
+    },
+    loginText: {
+        color: 'white',
+    }
+
+});
