@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, Dimensions, WebView, Text, TouchableOpacity, ImageBackground, Alert} from 'react-native';
 import {CheckBox, Icon} from 'react-native-elements';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 export default class QuizSelector extends React.Component {
@@ -15,24 +16,57 @@ export default class QuizSelector extends React.Component {
     render() {
         const {navigate} = this.props.navigation;
         return(
-            <View>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => navigate("Lessons")}
-                >
-                    <ImageBackground source={{uri:'https://www.washingtonpost.com/graphics/entertainment/2016-best-books/img/best-books-2016-promo.jpg'}} style={{width: '100%', height: '100%', borderRadius:10}}>
-                        <View style={{flex:1}}/>
-                        <View style={{backgroundColor: '#000', opacity:0.6, height:70, justifyContent:'space-between'}}>
-
-                        </View>
-                        <View style={{flexDirection: 'row',justifyContent:'space-between', position:'absolute', bottom:15, marginHorizontal: 20}}>
-                            <Icon
-                                name='book'
-                                type='feather'
-                                color='white'
-                                size={28}/>
-                            <Text style={styles.buttonText}>Lesson Based Quiz</Text>
+            <ScrollView>
+                
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigate("Lessons")}
+                    >
+                        <ImageBackground source={{uri:'https://www.washingtonpost.com/graphics/entertainment/2016-best-books/img/best-books-2016-promo.jpg'}} style={{width: '100%', height: '100%', borderRadius:10}}>
                             <View style={{flex:1}}/>
+                            <View style={{backgroundColor: '#000', opacity:0.6, height:70, justifyContent:'space-between'}}>
+
+                            </View>
+                            <View style={{flexDirection: 'row',justifyContent:'space-between', position:'absolute', bottom:15, marginHorizontal: 20}}>
+                                <Icon
+                                    name='book'
+                                    type='feather'
+                                    color='white'
+                                    size={28}/>
+                                <Text style={styles.buttonText}>Lesson Based Quiz</Text>
+                                <View style={{flex:1}}/>
+
+                                    <Icon
+                                        name='arrow-right-circle'
+                                        type='feather'
+                                        color='white'
+                                        size={28}/>
+
+
+                            </View>
+
+
+                        </ImageBackground>
+
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigate("RandomQuiz")}
+                    >
+                        <ImageBackground
+                            source={{uri:'https://marketplace.canva.com/MADGx2K7GWc/4/thumbnail_large/canva-pile-of-white-dices-on-white-surface-MADGx2K7GWc.jpg'}} style={{width: '100%', height: '100%', borderRadius:10}}>
+                            <View style={{flex:1}}/>
+                            <View style={{backgroundColor: '#000', opacity:0.6, height:70, justifyContent:'space-between'}}>
+
+                            </View>
+                            <View style={{flexDirection: 'row',justifyContent:'space-between', position:'absolute', bottom:15, marginHorizontal: 20}}>
+                                <Icon
+                                    name='package'
+                                    type='feather'
+                                    color='white'
+                                    size={28}/>
+                                <Text style={styles.buttonText}>Random Quiz</Text>
+                                <View style={{flex:1}}/>
 
                                 <Icon
                                     name='arrow-right-circle'
@@ -41,82 +75,118 @@ export default class QuizSelector extends React.Component {
                                     size={28}/>
 
 
-                        </View>
+                            </View>
 
 
-                    </ImageBackground>
+                        </ImageBackground>
 
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => navigate("RandomQuiz")}
-                >
-                    <ImageBackground
-                        source={{uri:'https://marketplace.canva.com/MADGx2K7GWc/4/thumbnail_large/canva-pile-of-white-dices-on-white-surface-MADGx2K7GWc.jpg'}} style={{width: '100%', height: '100%', borderRadius:10}}>
-                        <View style={{flex:1}}/>
-                        <View style={{backgroundColor: '#000', opacity:0.6, height:70, justifyContent:'space-between'}}>
-
-                        </View>
-                        <View style={{flexDirection: 'row',justifyContent:'space-between', position:'absolute', bottom:15, marginHorizontal: 20}}>
-                            <Icon
-                                name='package'
-                                type='feather'
-                                color='white'
-                                size={28}/>
-                            <Text style={styles.buttonText}>Random Quiz</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigate("RecommendedQuiz")}
+                    >
+                        <ImageBackground source={{uri:'https://neilpatel.com/wp-content/uploads/2017/08/personalize.jpg'}} style={{width: '100%', height: '100%', borderRadius:10}}>
                             <View style={{flex:1}}/>
+                            <View style={{backgroundColor: '#000', opacity:0.6, height:70, justifyContent:'space-between'}}>
 
-                            <Icon
-                                name='arrow-right-circle'
-                                type='feather'
-                                color='white'
-                                size={28}/>
+                            </View>
+                            <View style={{flexDirection: 'row',justifyContent:'space-between', position:'absolute', bottom:15, marginHorizontal: 20}}>
+                                <Icon
+                                    name='thumbs-up'
+                                    type='feather'
+                                    color='white'
+                                    size={28}/>
+                                <Text style={styles.buttonText}>Recommended Quiz</Text>
+                                <View style={{flex:1}}/>
+
+                                <Icon
+                                    name='arrow-right-circle'
+                                    type='feather'
+                                    color='white'
+                                    size={28}/>
 
 
-                        </View>
+                            </View>
 
 
-                    </ImageBackground>
+                        </ImageBackground>
 
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => navigate("RecommendedQuiz")}
-                >
-                    <ImageBackground source={{uri:'https://neilpatel.com/wp-content/uploads/2017/08/personalize.jpg'}} style={{width: '100%', height: '100%', borderRadius:10}}>
-                        <View style={{flex:1}}/>
-                        <View style={{backgroundColor: '#000', opacity:0.6, height:70, justifyContent:'space-between'}}>
-
-                        </View>
-                        <View style={{flexDirection: 'row',justifyContent:'space-between', position:'absolute', bottom:15, marginHorizontal: 20}}>
-                            <Icon
-                                name='thumbs-up'
-                                type='feather'
-                                color='white'
-                                size={28}/>
-                            <Text style={styles.buttonText}>Recommended Quiz</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.buttonLast}
+                        onPress={() => navigate("AdminScreen")}
+                    >
+                        <ImageBackground source={{uri:'https://previews.123rf.com/images/sergeybitos/sergeybitos1805/sergeybitos180500025/101122405-futuristic-concept-hud-gui-style-screen-dashboard-futuristic-circle-space-elements-info-graphics-vec.jpg'}} style={{width: '100%', height: '100%', borderRadius:10}}>
                             <View style={{flex:1}}/>
+                            <View style={{backgroundColor: '#000', opacity:0.6, height:70, justifyContent:'space-between'}}>
 
-                            <Icon
-                                name='arrow-right-circle'
-                                type='feather'
-                                color='white'
-                                size={28}/>
+                            </View>
+                            <View style={{flexDirection: 'row',justifyContent:'space-between', position:'absolute', bottom:15, marginHorizontal: 20}}>
+                                <Icon
+                                    name='settings'
+                                    type='feather'
+                                    color='white'
+                                    size={28}/>
+                                <Text style={styles.buttonText}>Admin Panel</Text>
+                                <View style={{flex:1}}/>
+
+                                <Icon
+                                    name='arrow-right-circle'
+                                    type='feather'
+                                    color='white'
+                                    size={28}/>
 
 
-                        </View>
+                            </View>
 
 
-                    </ImageBackground>
+                        </ImageBackground>
 
-                </TouchableOpacity>
-            </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.buttonLast}
+                        onPress={() => navigate("AdminScreen")}
+                    >
+                        <ImageBackground source={{uri:'https://previews.123rf.com/images/sergeybitos/sergeybitos1805/sergeybitos180500025/101122405-futuristic-concept-hud-gui-style-screen-dashboard-futuristic-circle-space-elements-info-graphics-vec.jpg'}} style={{width: '100%', height: '100%', borderRadius:10}}>
+                            <View style={{flex:1}}/>
+                            <View style={{backgroundColor: '#000', opacity:0.6, height:70, justifyContent:'space-between'}}>
+
+                            </View>
+                            <View style={{flexDirection: 'row',justifyContent:'space-between', position:'absolute', bottom:15, marginHorizontal: 20}}>
+                                <Icon
+                                    name='settings'
+                                    type='feather'
+                                    color='white'
+                                    size={28}/>
+                                <Text style={styles.buttonText}>Admin Panel</Text>
+                                <View style={{flex:1}}/>
+
+                                <Icon
+                                    name='arrow-right-circle'
+                                    type='feather'
+                                    color='white'
+                                    size={28}/>
+
+
+                            </View>
+
+
+                        </ImageBackground>
+
+                    </TouchableOpacity>
+                
+            </ScrollView>
         )
     }
 }
 
 const styles = StyleSheet.create({
 
+    MainContainer: {
+        flex: 1,
+        alignItems: 'center'
+        //padding: 5,
+    },
     container: {
         flex: 1,
         backgroundColor: '#fff',
@@ -153,6 +223,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: '32%',
         marginTop: 7,
+        marginHorizontal: 10
+    },
+    buttonLast:{
+        borderRadius: 10,
+        alignItems: 'center',
+        height: '32%',
+        marginTop: 7,
+        marginBottom: 5,
         marginHorizontal: 10
     },
     buttonText: {

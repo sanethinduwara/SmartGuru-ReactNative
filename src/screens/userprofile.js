@@ -8,11 +8,14 @@ import {
     Image,
     Platform,
     processColor,
-    ActivityIndicator, TouchableOpacity
+    ActivityIndicator, 
+    TouchableOpacity,
+    ImageBackground
 } from 'react-native';
 import {StackNavigator, SafeAreaView} from 'react-navigation';
 import {PieChart} from 'react-native-svg-charts'
 import {CheckBox, Icon} from "react-native-elements";
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default class UserProfile extends React.Component {
 
@@ -95,7 +98,7 @@ export default class UserProfile extends React.Component {
     render() {
         const {labelWidth, selectedSlice} = this.state;
         const {label, value} = selectedSlice;
-
+        const {navigate} = this.props.navigation;
 
 
 
@@ -122,6 +125,7 @@ export default class UserProfile extends React.Component {
         const deviceWidth = Dimensions.get('window').width;
 
         return (
+            <ScrollView>
             <View style={styles.MainContainer}>
                 <View style={styles.DetailContainer}>
                     <Image
@@ -164,7 +168,24 @@ export default class UserProfile extends React.Component {
                     </View>}
 
                 </View>
+                {/* <View style={styles.DetailContainer}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => navigate("AdminScreen")}
+                    >
+                        <Image
+                        source={{uri:'https://neilpatel.com/wp-content/uploads/2017/08/personalize.jpg'}} 
+                        // style={{width: '100%', height: '100%', borderRadius:10}}>
+                        style={styles.AdminImage}
+                        />
+                        <View style={{marginLeft: 20, justifyContent: 'center'}}>
+                            <Text style={styles.AdminBtn}>Admin Panel</Text>
+                        </View>
+                        
+                    </TouchableOpacity>
+                </View> */}
             </View>
+            </ScrollView>
         );
     }
 
@@ -183,6 +204,25 @@ const styles = StyleSheet.create({
         height: 120,
         marginTop: 10,
         borderRadius: 100,
+
+    },
+    AdminImage: {
+        // width: 120,
+        // height: 120,
+        // marginTop: 10,
+        // borderRadius: 0,
+        borderRadius: 10,
+        alignItems: 'center',
+        height: '32%',
+        marginTop: 7,
+        marginHorizontal: 10
+
+    },
+    AdminBtn: {
+        fontSize: 18,
+        marginTop: 5,
+        fontWeight:'bold',
+        padding: 5,
 
     },
     ProfileName: {
@@ -240,5 +280,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         alignSelf:'baseline',
         marginTop:5
+    },
+    button:{
+        borderRadius: 10,
+        alignItems: 'center',
+        height: '32%',
+        marginTop: 7,
+        marginHorizontal: 10
     }
 });

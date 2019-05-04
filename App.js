@@ -14,6 +14,7 @@ import RandomQuiz from "./src/screens/randomquiz"
 import URLCategorySelector from "./src/screens/URLCategorySelector"
 
 import QuizSelector from "./src/screens/quizselector"
+import AdminScreen from "./src/screens/adminscreen"
 import {Icon} from "react-native-elements";
 
 
@@ -33,6 +34,9 @@ const QuizzesStack = createStackNavigator({
     },
     RandomQuiz: {
         screen: RandomQuiz
+    },
+    AdminScreen: {
+        screen: AdminScreen
     }
 
 });
@@ -53,6 +57,9 @@ const RecommendedLinkStack = createStackNavigator({
 const ProfileStack = createStackNavigator({
     UserProfile: {
         screen: UserProfile
+    },
+    AdminScreen:{
+        screen:AdminScreen
     }
 });
 const BottomStack = createMaterialBottomTabNavigator(
