@@ -8,8 +8,10 @@ import LessonBasedQuiz from "./src/screens/lessonbasedquiz";
 import UserProfile from "./src/screens/userprofile";
 import Login from "./src/screens/login";
 import Test from "./src/screens/test";
+import StackLinks from "./src/screens/stackoverflowrecommendations";
 import RecommendedQuiz from "./src/screens/recommendedquiz"
 import RandomQuiz from "./src/screens/randomquiz"
+import URLCategorySelector from "./src/screens/URLCategorySelector"
 
 import QuizSelector from "./src/screens/quizselector"
 import {Icon} from "react-native-elements";
@@ -34,9 +36,17 @@ const QuizzesStack = createStackNavigator({
     }
 
 });
-const VidStack = createStackNavigator({
-    Video:{
+
+const RecommendedLinkStack = createStackNavigator({
+
+    URLCategorySelector: {
+        screen: URLCategorySelector
+    },
+    RecommendedVideo:{
         screen: Video
+    },
+    StackLinks: {
+        screen:StackLinks
     }
 });
 
@@ -60,12 +70,12 @@ const BottomStack = createMaterialBottomTabNavigator(
                 title: 'Quizzes'
             }
         },
-        Video: {
-            screen: VidStack,
+        RecommendedURLs: {
+            screen: RecommendedLinkStack,
             navigationOptions: {
                 tabBarIcon: ({tintColor, focused}) => (
                     <Icon
-                        name='youtube'
+                        name='star'
                         type='feather'
                         color={tintColor}
                         size={25}/>
@@ -109,7 +119,11 @@ const BottomStack = createMaterialBottomTabNavigator(
 
 const AppNavigator = createStackNavigator({
     Login: {
-        screen: Login
+        screen: Login,
+        navigationOptions: () => ({
+            header: null,
+            //headerLeft: null
+        }),
     },
     HomeScreen: {
         screen: BottomStack,
