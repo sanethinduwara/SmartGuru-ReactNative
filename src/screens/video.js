@@ -1,7 +1,17 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions, WebView, Text } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  WebView,
+  Linking,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator
+} from 'react-native';
 
 class YouTube extends React.Component {
+
 
   constructor(props){
     super(props);
@@ -15,31 +25,80 @@ class YouTube extends React.Component {
     //let url = {uri: "https://www.youtube.com/embed/"+this.state.id};
 
     return (
-        <View style={styles.video}>
+        <View>
+          <View style={styles.video}>
           <WebView
-              source={{uri: "https://www.youtube.com/embed/"+this.props.videoId}}
+              source={{uri: this.props.url}}
               style={{borderRadius:100}}
-
           />
-          <Text>{this.source}</Text>
         </View>
+          <TouchableOpacity
+              style={[styles.video,{position: 'absolute', top:0}]}
+              onPress={() => Linking.openURL(this.props.url)}>
+          </TouchableOpacity>
+
+        </View>
+
     );
   }
 }
 
-export default class Video extends React.Component {
+export default class RecommendedVideo extends React.Component {
+
+  urls = [];
 
   static navigationOptions = {
     title: "Recommended"
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: true
+    }
+  }
+
+  componentDidMount() {
+
+    const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/recommended/video`;
+    return fetch(URL)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.urls = responseJson;
+          //console.log("links", responseJson.toString());
+          this.setState({
+            isLoading: false,
+          }, function () {
+
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+  }
+
   render() {
 
     return (
-        <View style={{alignItems: 'center'}}><YouTube
-            videoId="3u1fu6f8Hto"
-            //style={styles.video}
-        /></View>
+
+          <View style={styles.container}>
+
+            {this.state.isLoading?<ActivityIndicator style={{flex:1, justifyContent: 'center'}}/>:<FlatList
+                data={this.urls}
+                renderItem={({ item }) => (
+                    <View style={{alignItems: 'center'}}>
+                      <YouTube url={item}/>
+                    </View>
+                )}
+
+                keyExtractor={(item, index) => index.toString()}
+            />}
+
+          </View>
+
+
+
+
     );
   }
 }
@@ -49,8 +108,6 @@ const styles = StyleSheet.create({
   container: {
     flex :1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
 
   },
   video:{
