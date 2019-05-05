@@ -15,6 +15,7 @@ import URLCategorySelector from "./src/screens/URLCategorySelector"
 
 import QuizSelector from "./src/screens/quizselector"
 import AdminScreen from "./src/screens/adminscreen"
+import DisplayUsers from "./src/screens/displayusers"
 import {Icon} from "react-native-elements";
 
 
@@ -37,6 +38,9 @@ const QuizzesStack = createStackNavigator({
     },
     AdminScreen: {
         screen: AdminScreen
+    },
+    DisplayUsers:{ 
+        screen: DisplayUsers
     }
 
 });

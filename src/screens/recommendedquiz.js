@@ -239,7 +239,7 @@ export default class Quiz extends React.Component {
 
         if (this.state.qsIndex < this.questions.length) {
 
-
+console.log("question check!!! -", this.questions[1].options[0]);
             for (var i = 0; i <= 4; i++) {
                 this.radio_props.push({
                     label: this.questions[this.state.qsIndex].options[i],
