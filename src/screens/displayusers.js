@@ -50,7 +50,7 @@ export default class DisplayUsers extends React.Component {
 
     componentDidMount() {
 
-        const URL = `https://gist.githubusercontent.com/shehanliyanage/6a681cd875374b899364a353b51872a2/raw/8293d06321e872508c4f4b9387f5e50becb5a65c/FetchUserData`;
+        const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/users`;
         return fetch(URL)
             .then((response) => response.json())
             .then((responseJson) => {
@@ -64,7 +64,7 @@ export default class DisplayUsers extends React.Component {
                         userType: responseJson[i].UserType,
                         // options: [
                         //     responseJson[i].options.op1,
-                        //     responseJson[i].options.op2,
+                        //     responseJson[i].options.op2
                         //     responseJson[i].options.op3,
                         //     responseJson[i].options.op4,
                         //     responseJson[i].options.op5
@@ -251,6 +251,7 @@ export default class DisplayUsers extends React.Component {
                 });
                 //this.qs_options.push(this.questions[this.state.qsIndex].options[i]);
                 console.log("qsIndex =>",this.state.qsIndex)
+                
             }
             
             return (
@@ -338,7 +339,25 @@ export default class DisplayUsers extends React.Component {
                         <Text style={styles.textDesign}>Email : {this.questions[6].question}</Text>
                         <Text style={styles.textDesign}>User Type : {this.questions[6].userType}</Text>
                         
-                    </View>  
+                    </View>
+                    <View style={styles.qsContainer}>
+                        <Text style={styles.qsNoLabel}>{this.questions[7].qsTopic}</Text>
+                        
+                        {/* <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text> */}
+                        <Text style={styles.textDesign}>User ID : {this.questions[7].qsId}</Text>
+                        <Text style={styles.textDesign}>Email : {this.questions[7].question}</Text>
+                        <Text style={styles.textDesign}>User Type : {this.questions[7].userType}</Text>
+                        
+                    </View>
+                    <View style={styles.qsContainer}>
+                        <Text style={styles.qsNoLabel}>{this.questions[8].qsTopic}</Text>
+                        
+                        {/* <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text> */}
+                        <Text style={styles.textDesign}>User ID : {this.questions[8].qsId}</Text>
+                        <Text style={styles.textDesign}>Email : {this.questions[8].question}</Text>
+                        <Text style={styles.textDesign}>User Type : {this.questions[8].userType}</Text>
+                        
+                    </View>   
                 </ScrollView>
 
             );
