@@ -7,7 +7,8 @@ import {
     StyleSheet,
     Platform,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    Alert
 } from 'react-native';
 import CheckBoxGroup from '../elements/checkboxgroup'
 import {CheckBox, Icon} from "react-native-elements";
@@ -18,17 +19,52 @@ export default class Quiz extends React.Component {
     chapter_name = "";
     quizLevel = "";
     score = 0;
-
-    static navigationOptions = {
-        title: "Quiz",
-    };
-    //filtered_qs = [];
     user_answers = [];
     questions = [];
     radio_props = [];
     wrong_answers = [];
     qs_options = [];
     values1 = [];
+
+
+
+    static navigationOptions = ({navigation})=>{
+        return {
+            headerTitle: 'Quiz',
+            headerLeft: (
+                <TouchableOpacity
+                    onPress={()=>{
+                        //Alert.alert("Do you want to exit?","You will get 0 points for the questions remaining in the quiz ")
+                        Alert.alert(
+                            'Do you want to exit?',
+                            'You will get 0 points for the questions remaining in the quiz',
+                            [
+                                {
+                                    text: 'No',
+                                    onPress: () => console.log('Cancel Pressed'),
+                                    style: 'cancel',
+                                },
+                                {text: 'Yes', onPress: () => {
+                                    const {navigate} = navigation;
+                                    navigate("QuizSelector");
+                                }},
+                            ]
+                        );
+
+                    }}>
+                    <View style={{flexDirection: 'row', marginLeft:7}}>
+                        <Icon
+                            name='arrow-left'
+                            type='feather'
+                            color='#000'
+                            size={25}/>
+                    </View>
+
+                </TouchableOpacity>
+            ),
+        };
+
+    };
 
     constructor(props) {
         super(props);
@@ -46,7 +82,20 @@ export default class Quiz extends React.Component {
 
     }
 
-
+    showAlert=() => {
+        Alert.alert(
+            'Alert Title',
+            'My Alert Msg',
+            [
+                {
+                    text: 'No',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {text: 'Yes', onPress: () => console.log('OK Pressed')},
+            ]
+        );
+    }
     componentDidMount() {
 
         const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/lessons/${this.quizLevel}/${this.chapter_name}`;

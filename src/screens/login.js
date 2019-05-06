@@ -1,6 +1,8 @@
-import {Alert, Image, StyleSheet, Text, TextInput, TouchableHighlight, View, ActivityIndicator} from "react-native";
+import {Alert, Image, StyleSheet, Text, TextInput, TouchableHighlight, View, ActivityIndicator, AsyncStorage} from "react-native";
 import React, {Component} from "react";
 import {Icon} from "react-native-elements";
+import {LinearGradient} from "expo";
+//import AsyncStorage from '@react-native-community/async-storage';
 
 export default class LoginView extends Component {
 
@@ -11,13 +13,20 @@ export default class LoginView extends Component {
             password: '',
             serverResponse: '',
             isLoading: false,
+            userType:'',
+            userID: ''
         }
     }
+
 
     onClickListener = (viewId) => {
         Alert.alert("Alert", viewId);
     };
 
+
+    componentDidUpdate(prevProps, prevState) {
+        //this.checkServerResponse();
+    }
     sendDataToServer = () => {
         this.setState({
             isLoading: true
@@ -37,17 +46,71 @@ export default class LoginView extends Component {
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log("response status", responseJson.status);
+                //console.log("userId ", responseJson.userID);
 
                 this.setState({
+                    serverResponse: responseJson.status,
+                    userID: responseJson.userID,
+                    userType: responseJson.userType,
                     isLoading: false,
-                    serverResponse: responseJson.status
-                });
-                this.checkServerResponse();
+                })
+                this.checkServerResponse()
+
             })
             .catch((err) => console.log(err));
 
+
         console.log("user details", JSON.stringify(json_output))
     };
+
+    _storeData = async () => {
+        try {
+            //await AsyncStorage.setItem('@userID', this.state.userID);
+            //await AsyncStorage.setItem('@username', this.state.username);
+
+            await AsyncStorage.setItem('@userdetails', JSON.stringify({username: this.state.username, userID: this.state.userID, userType: this.state.userType}));
+
+            //await AsyncStorage.multiSet([['@username', this.state.username], ['@userID', this.state.userID]], () => {
+                //to do something
+            //});
+            //await AsyncStorage.setItem('@userID', this.state.userID);
+        } catch (error) {
+            // Error saving data
+        }
+    };
+
+
+
+    retrieveData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('@userdetails');
+            //if (value !== null) {
+            const {navigate} = this.props.navigation;
+            if (value.userType==="s"){
+                navigate("HomeScreen");
+            } else if (value.userType==="a") {
+                navigate("AdminScreen");
+            }
+
+            this.setState({
+                serverResponse: ''
+            });
+                //if(this.state.userType==="s"){
+
+                //}
+
+                console.log(value);
+            //}
+        } catch (error) {
+            // Error retrieving data
+        }
+    };
+
+    componentDidMount() {
+        (async () => {
+            await this.retrieveData();
+        })();
+    }
 
     checkServerResponse = () => {
         switch (this.state.serverResponse) {
@@ -63,8 +126,18 @@ export default class LoginView extends Component {
 
             case "Access Allowed":
                 console.log("case 3");
+
+                (async () => {
+                    await this._storeData();
+                })();
                 const {navigate} = this.props.navigation;
-                navigate("HomeScreen");
+                if (this.state.userType==="s"){
+                    navigate("HomeScreen");
+                }else if (this.state.userType==="a"){
+                    navigate("AdminScreen");
+                }
+
+
                 break;
             default:
                 console.log("default", this.state.serverResponse)
@@ -78,10 +151,28 @@ export default class LoginView extends Component {
 
     };
 
+    checkIfLogged = () => {
+        try {
+            const value = AsyncStorage.getItem('@username');
+            if(value !== null) {
+                const {navigate} = this.props.navigation;
+                navigate("HomeScreen");
+            }
+        } catch(e) {
+            // error reading value
+        }
+    };
 
     render() {
+
+        const {navigate} = this.props.navigation;
+        if (this.state.userID!==""&& this.state.userType!==""){
+            console.log("sajliadsf", this.state.userID);
+
+        }
         return (
-            <View style={styles.container}>
+
+                <View style={styles.container}>
                 <View style={styles.inputContainer}>
                     <Icon
                         name='user'
@@ -91,7 +182,8 @@ export default class LoginView extends Component {
                     <TextInput style={styles.inputs}
                                placeholder="Username"
                                underlineColorAndroid='transparent'
-                               onChangeText={(username) => this.setState({username})}/>
+                               onChangeText={(username) => this.setState({username})}
+                               value={this.state.username}/>
                 </View>
 
                 <View style={styles.inputContainer}>
@@ -104,7 +196,8 @@ export default class LoginView extends Component {
                                placeholder="Password"
                                secureTextEntry={true}
                                underlineColorAndroid='transparent'
-                               onChangeText={(password) => this.setState({password})}/>
+                               onChangeText={(password) => this.setState({password})}
+                               value={this.state.password}/>
                 </View>
 
                 {this.state.isLoading?<ActivityIndicator/>:null}
@@ -120,10 +213,12 @@ export default class LoginView extends Component {
                     <Text style={{fontSize:16, marginTop: 25}}>Forgot your password?</Text>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.buttonContainer} onPress={() => this.onClickListener('register')}>
+                <TouchableHighlight style={styles.buttonContainer} onPress={() =>navigate("Register")}>
                     <Text style={{color: '#790000', fontSize:16}}>Register</Text>
                 </TouchableHighlight>
             </View>
+
+
         );
     }
 }
@@ -131,7 +226,6 @@ export default class LoginView extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
         alignItems: "center",
         justifyContent: "center"
     },

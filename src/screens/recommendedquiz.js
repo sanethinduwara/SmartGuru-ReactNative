@@ -58,6 +58,7 @@ export default class Quiz extends React.Component {
                     //adding questions to question array
                     this.questions.push({
                         qsId: responseJson[i].qs_id,
+                        qsChapter: responseJson[i].qs_chapter,
                         qsTopic: responseJson[i].qs_topic,
                         question: responseJson[i].question,
                         options: [
@@ -160,8 +161,8 @@ export default class Quiz extends React.Component {
 
     send_to_server = () => {
 
-        var json = {chapter:this.chapter_name, quiz_level:this.quizLevel, wrong_qs: this.wrong_answers, total_qs: this.questions.length, total_wrong_qs:this.questions.length-this.wrong_answers.length};
-        fetch(`http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/quiz`, {
+        var json = {chapter_scores: this.getChapterScores(),wrong_qs: this.wrong_answers, total_qs: this.questions.length, total_correct_qs:this.questions.length-this.wrong_answers.length};
+        fetch(`http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/mixedquiz`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -175,7 +176,7 @@ export default class Quiz extends React.Component {
             })
             .catch((err) => console.log(err));
 
-        console.log("wrong qs", JSON.stringify(json))
+        console.log("Json ", JSON.stringify(json))
 
     };
 
@@ -231,6 +232,36 @@ export default class Quiz extends React.Component {
 
     };
 
+    getTotalQuestions = (chapter)=>{
+        var total =0;
+        for (var i=0; i<this.questions.length;i++){
+            if (this.questions[i].qsChapter===chapter){
+                total++;
+            }
+        }
+        return total;
+    };
+
+    getCorrectQuestionCount = (chapter) => {
+        var wrong =0;
+        for (var i=0; i<this.wrong_answers.length;i++){
+            if (this.wrong_answers[i].qsChapter===chapter){
+                wrong++;
+            }
+        }
+        return this.getTotalQuestions(chapter)-wrong;
+    };
+
+    getChapterScores =()=>{
+        var chapters = ["Introduction to Computers, Programs, and Java","Elementary Programming","Selections","Loops","Methods","Single-Dimensional Arrays","Objects and Classes", "Strings", "Thinking in Objects", "Inheritance and Polymorphism"]
+        var chapter_scores = [];
+        for (var i =0;i<chapters.length;i++){
+            if (this.getTotalQuestions(chapters[i])!==0){
+                chapter_scores.push({chapter:chapters[i], total_qs:this.getTotalQuestions(chapters[i]), correct_qs:this.getCorrectQuestionCount(chapters[i])})
+            }
+        }
+        return chapter_scores;
+    };
 
     display_question = () => {
         this.radio_props = [];
@@ -239,7 +270,7 @@ export default class Quiz extends React.Component {
 
         if (this.state.qsIndex < this.questions.length) {
 
-console.log("question check!!! -", this.questions[1].options[0]);
+
             for (var i = 0; i <= 4; i++) {
                 this.radio_props.push({
                     label: this.questions[this.state.qsIndex].options[i],

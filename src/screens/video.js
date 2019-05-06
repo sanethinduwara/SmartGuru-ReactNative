@@ -60,7 +60,7 @@ export default class RecommendedVideo extends React.Component {
 
   componentDidMount() {
 
-    const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/recommended/video`;
+    const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/youtubelinks`;
     return fetch(URL)
         .then((response) => response.json())
         .then((responseJson) => {

@@ -6,16 +6,14 @@ import {
     WebView,
     Text,
     Image,
-    Platform,
+    Button,
     processColor,
-    ActivityIndicator, 
-    TouchableOpacity,
-    ImageBackground
+    ActivityIndicator, TouchableOpacity,
+    AsyncStorage,
+
 } from 'react-native';
-import {StackNavigator, SafeAreaView} from 'react-navigation';
 import {PieChart} from 'react-native-svg-charts'
-import {CheckBox, Icon} from "react-native-elements";
-import { ScrollView } from 'react-native-gesture-handler';
+import {Icon} from "react-native-elements";
 
 export default class UserProfile extends React.Component {
 
@@ -23,9 +21,39 @@ export default class UserProfile extends React.Component {
     values = [];
     colors = [];
 
-    static navigationOptions = {
-        title: 'Profile',
+    static navigationOptions = ({navigation})=>{
+        return {
+            headerTitle: 'Profile',
+            headerRight: (
+                <TouchableOpacity
+                    onPress={()=>{
+                        (async () => {
+                            try {
+                                await AsyncStorage.clear()
+                            } catch(e) {
+                                // clear error
+                            }
+                        })();
+
+                        const {navigate} = navigation;
+                        navigate("Login");
+                    }}>
+                    <View style={{flexDirection: 'row', marginRight:20}}>
+                        <Icon
+                            name='log-out'
+                            type='feather'
+                            color='#000'
+                            size={25}/>
+                        <Text style={{fontWeight: 'bold', marginLeft:10, fontSize:16}}>Logout</Text>
+                    </View>
+
+                </TouchableOpacity>
+            ),
+        };
+
     };
+
+
 
     constructor(props) {
         super(props);
@@ -35,12 +63,37 @@ export default class UserProfile extends React.Component {
                 value: 0
             },
             labelWidth: 0,
-            isLoading:true
+            isLoading:true,
+            username:'',
+            userID:''
         }
     }
 
+    retrieveStoredData =  () => {
+        try {
+            //const uID = await AsyncStorage.getItem('@userID');
+            //const uName = await AsyncStorage.getItem('@username');
+            var value = AsyncStorage.getItem('@userdetails');
+
+            value = JSON.parse(value)
+            //if (uName !== null) {
+                this.setState({username:value.username});
+            //}
+            //if (uID !== null) {
+                this.setState({userID:value.userID});
+            //}
+
+            console.log("qw",value.userID)
+        } catch (error) {
+            // Error retrieving data
+        }
+    };
+
     componentDidMount() {
 
+        this.retrieveStoredData();
+
+        console.log("user id ",this.state.userID);
         const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/performance/1`;
         return fetch(URL)
             .then((response) => response.json())
@@ -52,7 +105,7 @@ export default class UserProfile extends React.Component {
                     this.keys.push(responseJson.scores[i].chapter);
                     this.values.push(responseJson.scores[i].chapterScore);
 
-                    console.log("chapter",responseJson.scores[i].chapter)
+                    console.log("chapter",responseJson.scores[i].chapter);
                     console.log("score",responseJson.scores[i].chapterScore)
 
                     //this.user_answers.push({qsId: responseJson[i].qs_id, answer: ' '});
@@ -80,6 +133,26 @@ export default class UserProfile extends React.Component {
             });
     }
 
+
+    clearAll = async () => {
+        try {
+            await AsyncStorage.clear()
+        } catch(e) {
+            // clear error
+        }
+
+        console.log('Done.')
+    };
+
+    onLogOutClick = ()=>{
+        (async () => {
+            await this.clearAll();
+        })();
+
+        const {navigate} = this.props.navigation;
+        navigate("Login");
+    };
+
     showIndications = (array) => {
         return array.map((key, index) => {
             return (
@@ -103,8 +176,9 @@ export default class UserProfile extends React.Component {
 
 
 
+
         //this.keys = ['Introduction', 'Loops', 'Selections', 'Methods', 'Arrays'];
-        this.values = [80, 10, 40, 50, 30];
+        //this.values = [80, 10, 40, 50, 30];
         this.colors = ['#4466c6', '#e93850', '#f8a105', '#8cc63f', '#169d93', '#671e46', '#8fc1ed', '#5a403a', '#d34380', '#5f5535'];
 
         const data = this.keys.map((key, index) => {
@@ -125,21 +199,24 @@ export default class UserProfile extends React.Component {
         const deviceWidth = Dimensions.get('window').width;
 
         return (
-            <ScrollView>
-            <View style={styles.MainContainer}>
+
+
+                <View style={styles.MainContainer}>
                 <View style={styles.DetailContainer}>
-                    <Image
-                        style={styles.ProfileImage}
-                        source={{uri: 'https://facebook.github.io/react-native/docs/assets/favicon.png'}}
-                    />
-                    <View style={{marginLeft: 20, justifyContent: 'center'}}>
-                        <Text style={styles.ProfileName}>Saneth Induwara</Text>
-                        <TouchableOpacity
-                            style={styles.buttonOutline}
-                            onPress={() => {}}>
-                            <Text>Edit Profile</Text>
-                        </TouchableOpacity>
-                    </View>
+                        <Image
+                            style={styles.ProfileImage}
+                            source={{uri: 'https://banner2.kisspng.com/20180523/tha/kisspng-businessperson-computer-icons-avatar-clip-art-lattice-5b0508dc6a3a10.0013931115270566044351.jpg'}}
+                        />
+                        <View style={{marginLeft: 30, justifyContent: 'center', alignItems:'center'}}>
+                            <Text style={styles.ProfileName}>{this.state.username}</Text>
+                            <TouchableOpacity
+                                style={styles.buttonOutline}
+                                onPress={() => {navigate("EditProfile",{username:this.state.username});}}>
+                                <Text>Edit Profile</Text>
+                            </TouchableOpacity>
+                        </View>
+
+
 
                 </View>
                 <View style={styles.CardView}>
@@ -148,17 +225,17 @@ export default class UserProfile extends React.Component {
                     <View style={styles.HorizontalLine}/>
                     {this.state.isLoading?<ActivityIndicator style={{marginTop:20}}/>:<View style={{flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{height: 250, width:250, alignItems: 'center'}}>
-                        <PieChart
-                            style={{height: 250, width:250}}
-                            outerRadius={'80%'}
-                            innerRadius={'45%'}
-                            data={data}
-                        />
-                        <Text
+                            <PieChart
+                                style={{height: 250, width:250}}
+                                outerRadius={'80%'}
+                                innerRadius={'45%'}
+                                data={data}
+                            />
+                            <Text
 
-                            style={{position: 'absolute', top: '45%', fontSize:20, bottom: 0, justifyContent: 'center', alignItems: 'center', alignSelf:'center', fontWeight:'bold'}}>
-                            {`${value}`}%
-                        </Text>
+                                style={{position: 'absolute', top: '45%', fontSize:20, bottom: 0, justifyContent: 'center', alignItems: 'center', alignSelf:'center', fontWeight:'bold'}}>
+                                {`${value}`}%
+                            </Text>
                         </View>
 
 
@@ -168,24 +245,9 @@ export default class UserProfile extends React.Component {
                     </View>}
 
                 </View>
-                {/* <View style={styles.DetailContainer}>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => navigate("AdminScreen")}
-                    >
-                        <Image
-                        source={{uri:'https://neilpatel.com/wp-content/uploads/2017/08/personalize.jpg'}} 
-                        // style={{width: '100%', height: '100%', borderRadius:10}}>
-                        style={styles.AdminImage}
-                        />
-                        <View style={{marginLeft: 20, justifyContent: 'center'}}>
-                            <Text style={styles.AdminBtn}>Admin Panel</Text>
-                        </View>
-                        
-                    </TouchableOpacity>
-                </View> */}
             </View>
-            </ScrollView>
+
+
         );
     }
 
@@ -206,25 +268,6 @@ const styles = StyleSheet.create({
         borderRadius: 100,
 
     },
-    AdminImage: {
-        // width: 120,
-        // height: 120,
-        // marginTop: 10,
-        // borderRadius: 0,
-        borderRadius: 10,
-        alignItems: 'center',
-        height: '32%',
-        marginTop: 7,
-        marginHorizontal: 10
-
-    },
-    AdminBtn: {
-        fontSize: 18,
-        marginTop: 5,
-        fontWeight:'bold',
-        padding: 5,
-
-    },
     ProfileName: {
         fontSize: 18,
         marginTop: 5,
@@ -234,8 +277,8 @@ const styles = StyleSheet.create({
     DetailContainer: {
         alignItems: 'center',
         backgroundColor: '#d5d5d5',
-        padding: 10,
-        paddingVertical: 50,
+        paddingHorizontal: 10,
+        paddingVertical: 30,
         width: "100%",
         flexDirection: 'row',
         justifyContent: 'center'
@@ -278,14 +321,7 @@ const styles = StyleSheet.create({
         borderColor:'#a5a5a5',
         paddingVertical: 7,
         paddingHorizontal: 15,
-        alignSelf:'baseline',
-        marginTop:5
-    },
-    button:{
-        borderRadius: 10,
-        alignItems: 'center',
-        height: '32%',
-        marginTop: 7,
-        marginHorizontal: 10
+        //alignSelf:'baseline',
+        marginTop:7
     }
 });
