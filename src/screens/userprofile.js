@@ -53,8 +53,6 @@ export default class UserProfile extends React.Component {
 
     };
 
-
-
     constructor(props) {
         super(props);
         this.state = {
@@ -69,18 +67,24 @@ export default class UserProfile extends React.Component {
         }
     }
 
-    retrieveStoredData =  () => {
+    retrieveStoredData = async() => {
         try {
             //const uID = await AsyncStorage.getItem('@userID');
             //const uName = await AsyncStorage.getItem('@username');
-            var value = AsyncStorage.getItem('@userdetails');
+            const uName = await AsyncStorage.getItem('@username');
+            console.log("user profile",uName);
+            const uID = await AsyncStorage.getItem('@userID');
+            console.log("user ID ",uID);
 
-            value = JSON.parse(value)
+            //value = JSON.parse(value);
             //if (uName !== null) {
-                this.setState({username:value.username});
+                this.setState({
+                    username:uName,
+                    userID:parseInt(uID)
+                });
             //}
             //if (uID !== null) {
-                this.setState({userID:value.userID});
+                //this.setState({userID:value.userID});
             //}
 
             console.log("qw",value.userID)
@@ -91,10 +95,27 @@ export default class UserProfile extends React.Component {
 
     componentDidMount() {
 
-        this.retrieveStoredData();
+        (async () => {
+            const uName = await AsyncStorage.getItem('@username');
+            console.log("user profile",uName);
+            const uID = await AsyncStorage.getItem('@userID');
+            console.log("user ID ",uID);
+
+            //value = JSON.parse(value);
+            //if (uName !== null) {
+            this.setState({
+                username:uName,
+                userID:parseInt(uID)
+            });
+            await this.fetchData();
+        })();
 
         console.log("user id ",this.state.userID);
-        const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/performance/1`;
+
+    }
+
+    fetchData = ()=>{
+        const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/performance/${this.state.userID}`;
         return fetch(URL)
             .then((response) => response.json())
             .then((responseJson) => {
@@ -107,14 +128,6 @@ export default class UserProfile extends React.Component {
 
                     console.log("chapter",responseJson.scores[i].chapter);
                     console.log("score",responseJson.scores[i].chapterScore)
-
-                    //this.user_answers.push({qsId: responseJson[i].qs_id, answer: ' '});
-                    //console.log("qs id", responseJson[i].qs_id);
-                    //console.log("op1", responseJson[i].options.op1);
-                    //console.log("op2", responseJson[i].options.op2);
-                    //console.log("op3", responseJson[i].options.op3);
-                    //console.log("op4", responseJson[i].options.op4);
-
 
                 }
 
@@ -131,7 +144,7 @@ export default class UserProfile extends React.Component {
             .catch((error) => {
                 console.error(error);
             });
-    }
+    };
 
 
     clearAll = async () => {
@@ -231,11 +244,12 @@ export default class UserProfile extends React.Component {
                                 innerRadius={'45%'}
                                 data={data}
                             />
-                            <Text
-
-                                style={{position: 'absolute', top: '45%', fontSize:20, bottom: 0, justifyContent: 'center', alignItems: 'center', alignSelf:'center', fontWeight:'bold'}}>
+                            {this.keys.length===0?
+                                <Text style={{position: 'absolute', top: '45%', fontSize:16, color:'#7d7d7d', justifyContent: 'center', alignItems: 'center', alignSelf:'center'}}>No data to show</Text>:
+                                <Text style={{position: 'absolute', top: '45%', fontSize:20, bottom: 0, justifyContent: 'center', alignItems: 'center', alignSelf:'center', fontWeight:'bold'}}>
                                 {`${value}`}%
-                            </Text>
+                            </Text>}
+
                         </View>
 
 

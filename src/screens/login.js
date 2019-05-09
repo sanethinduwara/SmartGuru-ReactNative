@@ -53,7 +53,7 @@ export default class LoginView extends Component {
                     userID: responseJson.userID,
                     userType: responseJson.userType,
                     isLoading: false,
-                })
+                });
                 this.checkServerResponse()
 
             })
@@ -63,17 +63,11 @@ export default class LoginView extends Component {
         console.log("user details", JSON.stringify(json_output))
     };
 
-    _storeData = async () => {
+    StoreUserDetails = async () => {
         try {
-            //await AsyncStorage.setItem('@userID', this.state.userID);
-            //await AsyncStorage.setItem('@username', this.state.username);
-
-            await AsyncStorage.setItem('@userdetails', JSON.stringify({username: this.state.username, userID: this.state.userID, userType: this.state.userType}));
-
-            //await AsyncStorage.multiSet([['@username', this.state.username], ['@userID', this.state.userID]], () => {
-                //to do something
-            //});
-            //await AsyncStorage.setItem('@userID', this.state.userID);
+            await AsyncStorage.setItem('@username',this.state.username)
+            await AsyncStorage.setItem('@userID',this.state.userID)
+            //await Promise.all([AsyncStorage.setItem('@username',this.state.username), AsyncStorage.setItem('@userID',this.state.userID)]);
         } catch (error) {
             // Error saving data
         }
@@ -83,14 +77,18 @@ export default class LoginView extends Component {
 
     retrieveData = async () => {
         try {
-            const value = await AsyncStorage.getItem('@userdetails');
+            const username = await AsyncStorage.getItem('@username');
+            const userType = await AsyncStorage.getItem('@userType');
             //if (value !== null) {
             const {navigate} = this.props.navigation;
-            if (value.userType==="s"){
-                navigate("HomeScreen");
-            } else if (value.userType==="a") {
-                navigate("AdminScreen");
+            if(username!==null){
+                if (userType==="s"){
+                    navigate("HomeScreen");
+                } else if (userType==="a") {
+                    navigate("AdminScreen");
+                }
             }
+
 
             this.setState({
                 serverResponse: ''
@@ -106,11 +104,21 @@ export default class LoginView extends Component {
         }
     };
 
+
     componentDidMount() {
+
         (async () => {
+            this.setState({
+            username: '',
+            password: '',
+            userType:'',
+            userID: ''
+        });
             await this.retrieveData();
         })();
     }
+
+
 
     checkServerResponse = () => {
         switch (this.state.serverResponse) {
@@ -127,16 +135,19 @@ export default class LoginView extends Component {
             case "Access Allowed":
                 console.log("case 3");
 
+                /*
                 (async () => {
                     await this._storeData();
                 })();
-                const {navigate} = this.props.navigation;
+                //const {navigate} = this.props.navigation;
                 if (this.state.userType==="s"){
                     navigate("HomeScreen");
                 }else if (this.state.userType==="a"){
                     navigate("AdminScreen");
                 }
 
+
+                 */
 
                 break;
             default:
@@ -165,10 +176,22 @@ export default class LoginView extends Component {
 
     render() {
 
+        var userType='';
         const {navigate} = this.props.navigation;
-        if (this.state.userID!==""&& this.state.userType!==""){
-            console.log("sajliadsf", this.state.userID);
-
+        if (this.state.userID!==""&& this.state.userType!==""&& this.state.serverResponse==="Access Allowed"){
+            (async () => {
+                await AsyncStorage.setItem('@username',this.state.username);
+                await AsyncStorage.setItem('@userID',this.state.userID.toString());
+                await AsyncStorage.setItem('@userType',this.state.userType);
+                console.log("username set to "+ await AsyncStorage.getItem('@username'));
+                console.log("username set to "+ await AsyncStorage.getItem('@userID'));
+                //userType = await AsyncStorage.getItem('@userType');
+            })();
+            if (this.state.userType==="s"){
+                navigate("HomeScreen");
+            }else if (this.state.userType==="a") {
+                navigate("AdminScreen");
+            }
         }
         return (
 
