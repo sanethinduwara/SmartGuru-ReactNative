@@ -7,6 +7,7 @@ export default class AdminScreen extends React.Component {
 
     static navigationOptions = {
         title: 'Admin Panel',
+        headerLeft: null
     };
 
     showAlert = (msg)=>{
@@ -19,7 +20,7 @@ export default class AdminScreen extends React.Component {
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => navigate("DisplayUsers")}
-                >   
+                >
                     <ImageBackground source={{uri:'https://cdn.dribbble.com/users/982422/screenshots/2943349/people-avatars-800.jpg'}} style={{width: '100%', height: '100%', borderRadius:10}}>
                         <View style={{flex:1}}/>
                         <View style={{backgroundColor: '#000', opacity:0.6, height:70, justifyContent:'space-between'}}>
@@ -34,11 +35,11 @@ export default class AdminScreen extends React.Component {
                             <Text style={styles.buttonText}>Get Users</Text>
                             <View style={{flex:1}}/>
 
-                                <Icon
-                                    name='arrow-right-circle'
-                                    type='feather'
-                                    color='white'
-                                    size={28}/>
+                            <Icon
+                                name='arrow-right-circle'
+                                type='feather'
+                                color='white'
+                                size={28}/>
 
 
                         </View>
@@ -65,11 +66,11 @@ export default class AdminScreen extends React.Component {
                             <Text style={styles.buttonText}>Add Quesions</Text>
                             <View style={{flex:1}}/>
 
-                                <Icon
-                                    name='arrow-right-circle'
-                                    type='feather'
-                                    color='white'
-                                    size={28}/>
+                            <Icon
+                                name='arrow-right-circle'
+                                type='feather'
+                                color='white'
+                                size={28}/>
 
 
                         </View>
@@ -81,7 +82,7 @@ export default class AdminScreen extends React.Component {
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => navigate("Lessons")}
-                >   
+                >
                     <ImageBackground source={{uri:'https://www.lifewire.com/thmb/SwPypKd0BNU0681LHES0v3K4Ngc=/768x0/filters:no_upscale():max_bytes(150000):strip_icc()/shutterstock_406571038-smartphone-settings-592701055f9b5859507928b7.png'}} style={{width: '100%', height: '100%', borderRadius:10}}>
                         <View style={{flex:1}}/>
                         <View style={{backgroundColor: '#000', opacity:0.6, height:70, justifyContent:'space-between'}}>
@@ -96,11 +97,11 @@ export default class AdminScreen extends React.Component {
                             <Text style={styles.buttonText}>Get Users</Text>
                             <View style={{flex:1}}/>
 
-                                <Icon
-                                    name='arrow-right-circle'
-                                    type='feather'
-                                    color='white'
-                                    size={28}/>
+                            <Icon
+                                name='arrow-right-circle'
+                                type='feather'
+                                color='white'
+                                size={28}/>
 
 
                         </View>
@@ -109,7 +110,7 @@ export default class AdminScreen extends React.Component {
                     </ImageBackground>
 
                 </TouchableOpacity>
-                
+
             </View>
         )
     }

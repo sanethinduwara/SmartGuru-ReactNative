@@ -105,9 +105,7 @@ export default class DisplayUsers extends React.Component {
 
 
     /*
-
     on_click = (value)=>{
-
         this.setState({
             value: value,
         });
@@ -122,7 +120,6 @@ export default class DisplayUsers extends React.Component {
         console.log("correct answer", this.questions[this.state.qsIndex].answer);
         console.log("user answer", this.questions[this.state.qsIndex].options[value]);
     };
-
      */
 
     arraysEqual = (a, b) => {
@@ -233,7 +230,7 @@ export default class DisplayUsers extends React.Component {
 
     };
 
-    
+
 
     display_question = () => {
         this.radio_props = [];
@@ -251,18 +248,18 @@ export default class DisplayUsers extends React.Component {
                 });
                 //this.qs_options.push(this.questions[this.state.qsIndex].options[i]);
                 console.log("qsIndex =>",this.state.qsIndex)
-                
+
             }
-            
+
             return (
 
-                
+
                 <ScrollView>
-                    
+
                     <View style={styles.qsContainer}>
 
                         <Text style={styles.qsNoLabel}>{this.questions[0].qsTopic}</Text>
-                        
+
                         {/* <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text> */}
                         <Text style={styles.textDesign} >User ID : {this.questions[0].qsId}</Text>
                         <Text style={styles.textDesign}>Email : {this.questions[0].question}</Text>
@@ -277,18 +274,16 @@ export default class DisplayUsers extends React.Component {
                                     checked: [false, false, false, false, false],
                                 });
                             }
-
-
                             }
                         >
                             <Text style={styles.SubmitText}>{this.state.qsIndex < this.questions.length - 1 ? "Next" : "Submit"}</Text>
                         </TouchableOpacity> */}
 
                     </View>
-                    
+
                     <View style={styles.qsContainer}>
                         <Text style={styles.qsNoLabel}>{this.questions[1].qsTopic}</Text>
-                        
+
                         {/* <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text> */}
                         <Text style={styles.textDesign}>User ID : {this.questions[1].qsId}</Text>
                         <Text style={styles.textDesign}>Email : {this.questions[1].question}</Text>
@@ -297,67 +292,67 @@ export default class DisplayUsers extends React.Component {
                     </View>
                     <View style={styles.qsContainer}>
                         <Text style={styles.qsNoLabel}>{this.questions[2].qsTopic}</Text>
-                        
+
                         {/* <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text> */}
                         <Text style={styles.textDesign}>User ID : {this.questions[2].qsId}</Text>
                         <Text style={styles.textDesign}>Email : {this.questions[2].question}</Text>
                         <Text style={styles.textDesign}>User Type : {this.questions[2].userType}</Text>
-                        
-                    </View> 
+
+                    </View>
                     <View style={styles.qsContainer}>
                         <Text style={styles.qsNoLabel}>{this.questions[3].qsTopic}</Text>
-                        
+
                         {/* <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text> */}
                         <Text style={styles.textDesign}>User ID : {this.questions[3].qsId}</Text>
                         <Text style={styles.textDesign}>Email : {this.questions[3].question}</Text>
                         <Text style={styles.textDesign}>User Type : {this.questions[3].userType}</Text>
-                        
+
                     </View>
                     <View style={styles.qsContainer}>
                         <Text style={styles.qsNoLabel}>{this.questions[4].qsTopic}</Text>
-                        
+
                         {/* <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text> */}
                         <Text style={styles.textDesign}>User ID : {this.questions[4].qsId}</Text>
                         <Text style={styles.textDesign}>Email : {this.questions[4].question}</Text>
                         <Text style={styles.textDesign}>User Type : {this.questions[4].userType}</Text>
-                        
+
                     </View>
                     <View style={styles.qsContainer}>
                         <Text style={styles.qsNoLabel}>{this.questions[5].qsTopic}</Text>
-                        
+
                         {/* <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text> */}
                         <Text style={styles.textDesign}>User ID : {this.questions[5].qsId}</Text>
                         <Text style={styles.textDesign}>Email : {this.questions[5].question}</Text>
                         <Text style={styles.textDesign}>User Type : {this.questions[5].userType}</Text>
-                        
+
                     </View>
                     <View style={styles.qsContainer}>
                         <Text style={styles.qsNoLabel}>{this.questions[6].qsTopic}</Text>
-                        
+
                         {/* <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text> */}
                         <Text style={styles.textDesign}>User ID : {this.questions[6].qsId}</Text>
                         <Text style={styles.textDesign}>Email : {this.questions[6].question}</Text>
                         <Text style={styles.textDesign}>User Type : {this.questions[6].userType}</Text>
-                        
+
                     </View>
                     <View style={styles.qsContainer}>
                         <Text style={styles.qsNoLabel}>{this.questions[7].qsTopic}</Text>
-                        
+
                         {/* <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text> */}
                         <Text style={styles.textDesign}>User ID : {this.questions[7].qsId}</Text>
                         <Text style={styles.textDesign}>Email : {this.questions[7].question}</Text>
                         <Text style={styles.textDesign}>User Type : {this.questions[7].userType}</Text>
-                        
+
                     </View>
                     <View style={styles.qsContainer}>
                         <Text style={styles.qsNoLabel}>{this.questions[8].qsTopic}</Text>
-                        
+
                         {/* <Text style={styles.qsNoLabel}>Question {this.state.qsIndex + 1}</Text> */}
                         <Text style={styles.textDesign}>User ID : {this.questions[8].qsId}</Text>
                         <Text style={styles.textDesign}>Email : {this.questions[8].question}</Text>
                         <Text style={styles.textDesign}>User Type : {this.questions[8].userType}</Text>
-                        
-                    </View>   
+
+                    </View>
                 </ScrollView>
 
             );
@@ -437,22 +432,14 @@ export default class DisplayUsers extends React.Component {
             //this.filtered_qs =[];
             for (var i = 0; i < this.questions.length; i++) {
                 if (this.questions[i].difficulty === this.state.diff_level) {
-
                     this.filtered_qs.push(this.questions[i]);
                     this.user_answers.push({qsId: this.questions[i].qsId, answer: ' '});
                 }
             }
-
             console.log("this.state.ques.length",this.questions.length);
-
             console.log("testing 1",this.filtered_qs.length);
             //return filtered_qs
-
-
-
         };
-
-
      */
 
 

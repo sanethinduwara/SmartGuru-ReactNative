@@ -20,6 +20,7 @@ export default class EditProfile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            userId: '',
             username: '',
             email   : '',
             password: '',
@@ -30,7 +31,7 @@ export default class EditProfile extends React.Component {
 
     componentDidMount() {
 
-        const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/edit`;
+        const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/edit/${this.state.userID}`;
         return fetch(URL)
             .then((response) => response.json())
             .then((responseJson) => {
@@ -72,6 +73,7 @@ export default class EditProfile extends React.Component {
     render() {
         var {params} = this.props.navigation.state;
         this.username = params.username;
+        console.log("username", );
         const {navigate} = this.props.navigation;
         return(
             <View style={styles.container}>

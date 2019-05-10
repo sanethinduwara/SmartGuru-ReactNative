@@ -65,11 +65,30 @@ export default class SignUpView extends Component {
         if (this.state.username==="" || this.state.email==="" || this.state.password==="" || this.state.confirmPassword==="") {
             Alert.alert("Require field is empty", "Please fill all the details")
         }else {
-            if (this.state.password===this.state.confirmPassword){
-                this.sendDataToServer();
+            //checking whether username contains at least 8 characters
+            if (this.state.username.length>=8){
+                //if username meets requirements
+                //check whether password contains at least 8 character including 2 digits
+                if(this.state.password.replace(/[^0-9]/g,"").length>=2 && this.state.password.length>=8 ){
+                    //if password requirements are met
+                    //check whether password and confirm password are same
+                    if (this.state.password===this.state.confirmPassword){
+                        //send data to server to process
+                        this.sendDataToServer();
+                    }else {
+                        //display error if password and confirm password doesn't match
+                        Alert.alert("Password Mismatch", "Please Re-Check your password")
+                    }
+                }else {
+                    //display error if password requirements are not met
+                    Alert.alert("Invalid Password", "Password should contain at least 8 characters in including 2 digits at least")
+                }
+
             }else {
-                Alert.alert("Password Mismatch", "Please Re-Check your password")
+                //display erro if username requirements are not met
+                Alert.alert("Invalid Username", "Username should contain at least 8 characters")
             }
+
         }
 
 
