@@ -63,7 +63,7 @@ export default class UserProfile extends React.Component {
             labelWidth: 0,
             isLoading:true,
             username:'',
-            userID:''
+            userID:'',
         }
     }
 
@@ -78,13 +78,13 @@ export default class UserProfile extends React.Component {
 
             //value = JSON.parse(value);
             //if (uName !== null) {
-                this.setState({
-                    username:uName,
-                    userID:parseInt(uID)
-                });
+            this.setState({
+                username:uName,
+                userID:parseInt(uID)
+            });
             //}
             //if (uID !== null) {
-                //this.setState({userID:value.userID});
+            //this.setState({userID:value.userID});
             //}
 
             console.log("qw",value.userID)
@@ -96,23 +96,39 @@ export default class UserProfile extends React.Component {
     componentDidMount() {
 
         (async () => {
-            const uName = await AsyncStorage.getItem('@username');
-            console.log("user profile",uName);
-            const uID = await AsyncStorage.getItem('@userID');
-            console.log("user ID ",uID);
-
-            //value = JSON.parse(value);
-            //if (uName !== null) {
-            this.setState({
-                username:uName,
-                userID:parseInt(uID)
-            });
+            await this.retrieveData();
             await this.fetchData();
         })();
 
-        console.log("user id ",this.state.userID);
+
+        //console.log("user id ",this.state.userID);
 
     }
+
+    retrieveData = async()=>{
+        const uName = await AsyncStorage.getItem('@username');
+        console.log("user profile",uName);
+        const uID = await AsyncStorage.getItem('@userID');
+        console.log("user ID ",uID);
+
+        //value = JSON.parse(value);
+        //if (uName !== null) {
+        this.setState({
+            username:uName,
+            userID:uID
+        });
+    };
+    setUsername = (uName) =>{
+      this.setState({username:uName})
+    };
+    onCreate(){
+        (async () => {
+
+            await this.fetchData();
+        })();
+    }
+
+
 
     fetchData = ()=>{
         const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/performance/${this.state.userID}`;
@@ -214,20 +230,20 @@ export default class UserProfile extends React.Component {
         return (
 
 
-                <View style={styles.MainContainer}>
+            <View style={styles.MainContainer}>
                 <View style={styles.DetailContainer}>
-                        <Image
-                            style={styles.ProfileImage}
-                            source={{uri: 'https://banner2.kisspng.com/20180523/tha/kisspng-businessperson-computer-icons-avatar-clip-art-lattice-5b0508dc6a3a10.0013931115270566044351.jpg'}}
-                        />
-                        <View style={{marginLeft: 30, justifyContent: 'center', alignItems:'center'}}>
-                            <Text style={styles.ProfileName}>{this.state.username}</Text>
-                            <TouchableOpacity
-                                style={styles.buttonOutline}
-                                onPress={() => {navigate("EditProfile",{username:this.state.username});}}>
-                                <Text>Edit Profile</Text>
-                            </TouchableOpacity>
-                        </View>
+                    <Image
+                        style={styles.ProfileImage}
+                        source={{uri: 'https://banner2.kisspng.com/20180523/tha/kisspng-businessperson-computer-icons-avatar-clip-art-lattice-5b0508dc6a3a10.0013931115270566044351.jpg'}}
+                    />
+                    <View style={{marginLeft: 30, justifyContent: 'center', alignItems:'center'}}>
+                        <Text style={styles.ProfileName}>{this.state.username}</Text>
+                        <TouchableOpacity
+                            style={styles.buttonOutline}
+                            onPress={() => {navigate("EditProfile",{userID:this.state.userID, onNavigateBack: this.setUsername});}}>
+                            <Text>Edit Profile</Text>
+                        </TouchableOpacity>
+                    </View>
 
 
 
@@ -247,8 +263,8 @@ export default class UserProfile extends React.Component {
                             {this.keys.length===0?
                                 <Text style={{position: 'absolute', top: '45%', fontSize:16, color:'#7d7d7d', justifyContent: 'center', alignItems: 'center', alignSelf:'center'}}>No data to show</Text>:
                                 <Text style={{position: 'absolute', top: '45%', fontSize:20, bottom: 0, justifyContent: 'center', alignItems: 'center', alignSelf:'center', fontWeight:'bold'}}>
-                                {`${value}`}%
-                            </Text>}
+                                    {`${value}`}%
+                                </Text>}
 
                         </View>
 
