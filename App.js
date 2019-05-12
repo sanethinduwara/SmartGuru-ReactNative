@@ -7,15 +7,16 @@ import Lessons from './src/screens/lessons';
 import LessonBasedQuiz from "./src/screens/lessonbasedquiz";
 import UserProfile from "./src/screens/userprofile";
 import Login from "./src/screens/login";
-import Test from "./src/screens/test";
+import Register from "./src/screens/signup";
+import LeaderBoard from "./src/screens/LeaderBoard";
 import StackLinks from "./src/screens/stackoverflowrecommendations";
 import RecommendedQuiz from "./src/screens/recommendedquiz"
-import RandomQuiz from "./src/screens/randomquiz"
-import URLCategorySelector from "./src/screens/URLCategorySelector"
-
-import QuizSelector from "./src/screens/quizselector"
 import AdminScreen from "./src/screens/adminscreen"
 import DisplayUsers from "./src/screens/displayusers"
+import RandomQuiz from "./src/screens/randomquiz"
+import URLCategorySelector from "./src/screens/URLCategorySelector"
+import EditProfile from "./src/screens/EditProfile"
+import QuizSelector from "./src/screens/quizselector"
 import {Icon} from "react-native-elements";
 
 
@@ -35,12 +36,6 @@ const QuizzesStack = createStackNavigator({
     },
     RandomQuiz: {
         screen: RandomQuiz
-    },
-    AdminScreen: {
-        screen: AdminScreen
-    },
-    DisplayUsers:{ 
-        screen: DisplayUsers
     }
 
 });
@@ -62,8 +57,29 @@ const ProfileStack = createStackNavigator({
     UserProfile: {
         screen: UserProfile
     },
-    AdminScreen:{
-        screen:AdminScreen
+    EditProfile: {
+        screen:EditProfile
+    },
+});
+const LeaderBoardStack = createStackNavigator({
+    LeaderBoard: {
+        screen: LeaderBoard
+    }
+});
+const AdminStack = createStackNavigator({
+    AdminScreen: {
+        screen: AdminScreen,
+        navigationOptions: () => ({
+            //header: null,
+            headerLeft: null
+        }),
+    },
+    DisplayUsers: {
+        screen: DisplayUsers,
+        navigationOptions: () => ({
+            //header: null,
+            //headerLeft: null
+        }),
     }
 });
 const BottomStack = createMaterialBottomTabNavigator(
@@ -93,13 +109,13 @@ const BottomStack = createMaterialBottomTabNavigator(
                 )
             }
         },
-        Test: {
-            screen: Test,
+        LeaderBoard: {
+            screen: LeaderBoardStack,
             navigationOptions: {
                 tabBarIcon: ({tintColor, focused}) => (
                     <Icon
-                        name='comment-o'
-                        type='font-awesome'
+                        name='bar-chart-2'
+                        type='feather'
                         color={tintColor}
                         size={24}/>
                 )
@@ -131,6 +147,20 @@ const BottomStack = createMaterialBottomTabNavigator(
 const AppNavigator = createStackNavigator({
     Login: {
         screen: Login,
+        navigationOptions: () => ({
+            header: null,
+            //headerLeft: null
+        }),
+    },
+    AdminScreen:{
+        screen:AdminStack,
+        navigationOptions: () => ({
+            header: null,
+            //headerLeft: null
+        }),
+    },
+    Register: {
+        screen: Register,
         navigationOptions: () => ({
             header: null,
             //headerLeft: null
