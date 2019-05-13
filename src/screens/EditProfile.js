@@ -43,8 +43,13 @@ export default class EditProfile extends React.Component {
             userId: '',
             username: '',
             email: '',
+            newUsername: '',
+            oldUsername: '',
+            newEmail: '',
             password: '',
             oldPassword: '',
+            newPassword: '',
+            confirmNewPassword: '',
             serverResponse: '',
             savingChanges: false,
             visible: false,
@@ -53,7 +58,9 @@ export default class EditProfile extends React.Component {
 
     componentDidMount() {
 
-        const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/edit/${this.userID}`;
+        this.setState({oldUsername: this.state.userName});
+
+        const URL = `http://192.168.1.6:5000/edit/${this.userID}`;
         return fetch(URL)
             .then((response) => response.json())
             .then((responseJson) => {
@@ -73,10 +80,70 @@ export default class EditProfile extends React.Component {
             });
     }
 
+    displaySnckbar(msg) {
+        return (
+            <Snackbar
+                visible={this.state.visible}
+                onDismiss={() => this.setState({visible: false})}>{msg}</Snackbar>
+        )
+    }
+
+    validatePassword() {
+        if (this.state.oldPassword !== "" && this.state.newPassword !== "" && this.state.confirmNewPassword !== "") {
+            if (this.state.oldPassword === this.state.password) {
+                if (this.state.newPassword.replace(/[^0-9]/g, "").length >= 2 && this.state.newPassword.length >= 8) {
+                    if (this.state.confirmNewPassword === this.state.newPassword) {
+                        this.setState({password: this.state.newPassword});
+                        this.updateProfile();
+                    } else {
+                        Alert.alert("Password Mismatch", "Please Re-Check your new password")
+                    }
+                } else {
+                    Alert.alert("Invalid Password", "Password should contain at least 8 characters in including 2 digits at least")
+                }
+            } else {
+                Alert.alert("Invalid Password", "Current Password is Incorrect")
+            }
+        } else if (this.state.oldPassword === "" && this.state.newPassword === "" && this.state.confirmNewPassword === "") {
+            this.updateProfile();
+        } else {
+            Alert.alert("Incomplete Request", "Please Fill all the details under security info to change password or click on clear button to ")
+        }
+
+    }
+
+    clearSecurityInfo() {
+        this.setState({
+            oldPassword: '',
+            newPassword: '',
+            confirmNewPassword: ''
+        })
+    }
+
+    validateChanges() {
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (this.state.username.length >= 8) {
+            if (this.state.email.match(mailformat)) {
+                this.validatePassword();
+            } else {
+                Alert.alert("Invalid Email", "Email you entered is invalid. Please enter a valid email")
+            }
+        } else {
+            Alert.alert("Invalid Username", "Username must contain at least 8 characters")
+        }
+    }
+
     updateProfile = () => {
+
         var json = {username: this.state.username, email: this.state.email, password: this.state.password};
 
-        fetch(`http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/edit/${this.userID}`, {
+
+        this.setState({
+            savingChanges: true,
+        });
+
+
+        fetch(`http://192.168.1.6:5000/edit/${this.userID}`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -86,13 +153,21 @@ export default class EditProfile extends React.Component {
         })
             .then((response) => response.json())
             .then((responseJson) => {
-                if (responseJson.status === "saved") {
+                if (responseJson.status === "user exist") {
+                    Alert.alert("User Exist", "Username or email you are trying to use is connected with another account")
+                } else if (responseJson.status === "saved") {
 
                     this.setState({
-                        savingChanges: false,
                         visible: true
                     });
+                    (async () => {
+                        await AsyncStorage.setItem('@username', this.state.username);
+                    })();
+                    this.props.navigation.state.params.onNavigateBack(this.state.username);
                 }
+                this.setState({
+                    savingChanges: false,
+                })
             })
             .catch((err) => console.log(err));
 
@@ -100,14 +175,8 @@ export default class EditProfile extends React.Component {
     };
 
     onSavePress() {
-        this.setState({
-            savingChanges: true
-        });
-        this.updateProfile();
-        (async () => {
-            await AsyncStorage.setItem('@username', this.state.username);
-        })();
-        this.props.navigation.state.params.onNavigateBack(this.state.username);
+        this.validateChanges();
+
 
     };
 
@@ -117,7 +186,17 @@ export default class EditProfile extends React.Component {
         const {navigate} = this.props.navigation;
         return (
             <View style={styles.container}>
-                <!--text input for username-->
+
+                <View style={styles.titleBg}>
+                    <Text style={styles.titleText}>Personal Info</Text>
+                    <Icon
+                        name='angle-down'
+                        type='font-awesome'
+                        color='#b4b4b4'
+                        size={23}
+                    />
+                </View>
+
                 <View style={styles.inputContainer}>
                     <Icon
                         name='user'
@@ -131,13 +210,12 @@ export default class EditProfile extends React.Component {
                                onChangeText={(username) => this.setState({username})}/>
                 </View>
 
-                <!--text input for email-->
                 <View style={styles.inputContainer}>
                     <Icon
                         name='envelope'
                         type='font-awesome'
                         color="#b4b4b4"
-                        size={24}/>
+                        size={22}/>
                     <TextInput style={styles.inputs}
                                value={this.state.email}
                                placeholder="Email"
@@ -146,7 +224,16 @@ export default class EditProfile extends React.Component {
                                onChangeText={(email) => this.setState({email})}/>
                 </View>
 
-                <!--text input for password-->
+                <View style={styles.titleBg}>
+                    <Text style={styles.titleText}>Security Info</Text>
+                    <Icon
+                        name='angle-down'
+                        type='font-awesome'
+                        color='#b4b4b4'
+                        size={23}
+                    />
+                </View>
+
                 <View style={styles.inputContainer}>
                     <Icon
                         name='lock'
@@ -155,12 +242,12 @@ export default class EditProfile extends React.Component {
                         size={26}/>
                     <TextInput style={styles.inputs}
                                placeholder="Old Password"
+                               value={this.state.oldPassword}
                                secureTextEntry={true}
                                underlineColorAndroid='transparent'
                                onChangeText={(oldPassword) => this.setState({oldPassword})}/>
                 </View>
 
-                <!--text input for confirm password-->
                 <View style={styles.inputContainer}>
                     <Icon
                         name='lock'
@@ -168,28 +255,48 @@ export default class EditProfile extends React.Component {
                         color="#b4b4b4"
                         size={26}/>
                     <TextInput style={styles.inputs}
+                               value={this.state.newPassword}
                                placeholder="New Password"
                                secureTextEntry={true}
                                underlineColorAndroid='transparent'
-                               onChangeText={(confirmPassword) => this.setState({confirmPassword})}/>
+                               onChangeText={(newPassword) => this.setState({newPassword})}/>
+
                 </View>
+                <View style={styles.inputContainer}>
+                    <Icon
+                        name='lock'
+                        type='font-awesome'
+                        color="#b4b4b4"
+                        size={26}/>
+                    <TextInput style={styles.inputs}
+                               value={this.state.confirmNewPassword}
+                               placeholder="Confirm New Password"
+                               secureTextEntry={true}
+                               underlineColorAndroid='transparent'
+                               onChangeText={(confirmNewPassword) => this.setState({confirmNewPassword})}/>
+
+                </View>
+
+                <TouchableHighlight onPress={() => this.clearSecurityInfo()}>
+                    <Text style={{fontSize: 14, color: '#071d92', fontWeight: 'bold'}}>Clear Security Info</Text>
+                </TouchableHighlight>
 
                 {
                     //show loading indicator while saving
                     this.state.savingChanges ? <ActivityIndicator/> : null
                 }
 
-                <TouchableHighlight style={[styles.buttonContainer, styles.signupButton]}
+                <View style={{flex: 1}}/>
+
+                <TouchableHighlight style={[styles.buttonContainer, styles.saveButton]}
                                     onPress={() => this.onSavePress()}>
-                    <Text style={[styles.signUpText, {fontSize: 16}]}>Save Changes</Text>
+                    <Text style={[styles.saveText, {fontSize: 16}]}>Save Changes</Text>
                 </TouchableHighlight>
 
 
                 {
                     //Display that changes saved successfully
-                    this.state.visible ? <Snackbar
-                        visible={this.state.visible}
-                        onDismiss={() => this.setState({visible: false})}>Changes Saved</Snackbar> : null
+                    this.state.visible ? this.displaySnckbar("Changes Saved") : null
                 }
 
 
@@ -204,7 +311,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
-        justifyContent: 'center',
+        //justifyContent: 'center',
     },
     inputContainer: {
         borderColor: '#cacaca',
@@ -237,11 +344,29 @@ const styles = StyleSheet.create({
         width: 250,
         borderRadius: 30,
     },
-    signupButton: {
+    saveButton: {
         paddingVertical: 12,
         backgroundColor: "#ff0000",
+        marginBottom: 10
     },
-    signUpText: {
+    saveText: {
         color: 'white',
+    },
+    titleBg: {
+        flexDirection: 'row',
+        alignSelf: 'baseline',
+        paddingHorizontal: 35,
+        marginBottom: 20,
+        backgroundColor: '#494949',
+        paddingVertical: 10,
+        width: '100%'
+
+    },
+    titleText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginRight: 10
+
     }
 });
