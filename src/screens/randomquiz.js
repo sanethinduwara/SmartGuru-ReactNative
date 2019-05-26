@@ -7,7 +7,7 @@ import {
     StyleSheet,
     Platform,
     TouchableOpacity,
-    ScrollView
+    ScrollView, AsyncStorage
 } from 'react-native';
 import CheckBoxGroup from '../elements/checkboxgroup'
 import {CheckBox, Icon} from "react-native-elements";
@@ -40,7 +40,8 @@ export default class RandomQuiz extends React.Component {
             answerStatus: "",
             selected: false,
             checked: [false, false, false, false, false],
-            values: []
+            values: [],
+            userID: ''
 
         }
 
@@ -50,6 +51,11 @@ export default class RandomQuiz extends React.Component {
     componentDidMount() {
 
         const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/random`;
+
+        (async () => {
+            await this.setUserID();
+        })();
+
         return fetch(URL)
             .then((response) => response.json())
             .then((responseJson) => {
@@ -101,6 +107,15 @@ export default class RandomQuiz extends React.Component {
                 console.error(error);
             });
     }
+
+    setUserID = async () => {
+
+        const userID = await AsyncStorage.getItem('@userID');
+
+        this.setState({
+            userID: userID
+        });
+    };
 
 
     /*
@@ -161,7 +176,7 @@ export default class RandomQuiz extends React.Component {
 
     send_to_server = () => {
 
-        var json = {chapter_scores: this.getChapterScores(),wrong_qs: this.wrong_answers, total_qs: this.questions.length, total_correct_qs:this.questions.length-this.wrong_answers.length};
+        var json = {user_id: this.state.userID, chapter_scores: this.getChapterScores(),wrong_qs: this.wrong_answers, total_qs: this.questions.length, total_correct_qs:this.questions.length-this.wrong_answers.length};
         fetch(`http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/mixedquiz`, {
             method: 'POST',
             headers: {
@@ -293,6 +308,7 @@ export default class RandomQuiz extends React.Component {
                         <Text style={styles.qsDesc}>{this.questions[this.state.qsIndex].question}</Text>
 
                         <CheckBoxGroup
+                            ref={component => this.checkGroup = component}
                             labels={this.qs_options}
                             uncheckAll={true}
                             onPress={(checked) => {
@@ -310,6 +326,7 @@ export default class RandomQuiz extends React.Component {
                                 this.setState({
                                     checked: [false, false, false, false, false],
                                 });
+                                this.checkGroup.uncheckAll()
                             }
 
 
