@@ -60,7 +60,7 @@ export default class EditProfile extends React.Component {
 
         this.setState({oldUsername: this.state.userName});
 
-        const URL = `http://192.168.1.6:5000/edit/${this.userID}`;
+        const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/edit/${this.userID}`;
         return fetch(URL)
             .then((response) => response.json())
             .then((responseJson) => {
@@ -143,7 +143,7 @@ export default class EditProfile extends React.Component {
         });
 
 
-        fetch(`http://192.168.1.6:5000/edit/${this.userID}`, {
+        fetch(`http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/edit/${this.userID}`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
