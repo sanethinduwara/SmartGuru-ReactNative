@@ -7,7 +7,7 @@ import {
     Button,
     TouchableHighlight,
     Image,
-    Alert, ActivityIndicator
+    Alert, ActivityIndicator, AsyncStorage
 } from 'react-native';
 import {Icon, CheckBox} from "react-native-elements";
 
@@ -21,7 +21,8 @@ export default class SignUpView extends Component {
             password: '',
             confirmPassword: '',
             serverResponse: '',
-            studentChecked: true
+            studentChecked: true,
+            userID: ''
         }
     }
 
@@ -35,7 +36,7 @@ export default class SignUpView extends Component {
         });
 
         var json_output = {username: this.state.username, email: this.state.email, password: this.state.password, userType:this.state.studentChecked===true?"s":"a"};
-        fetch(`http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/signup`, {
+        fetch(`http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/signup`, { //http://192.168.1.2:5000
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -51,7 +52,8 @@ export default class SignUpView extends Component {
 
                 this.setState({
                     isLoading: false,
-                    serverResponse: responseJson.status
+                    serverResponse: responseJson.status,
+                    userID : responseJson.user_id
                 });
                 this.checkServerResponse();
             })
@@ -110,7 +112,21 @@ export default class SignUpView extends Component {
             case "Successfully Registered":
                 console.log("case 3");
                 const {navigate} = this.props.navigation;
-                navigate("HomeScreen");
+                (async () => {
+                    await AsyncStorage.setItem('@username',this.state.username);
+                    await AsyncStorage.setItem('@userID',this.state.userID.toString());
+                    await AsyncStorage.setItem('@userType',this.state.studentChecked?"s":"a");
+                    console.log("username set to "+ await AsyncStorage.getItem('@username'));
+                    console.log("userID set to "+ await AsyncStorage.getItem('@userID'));
+                    if(this.state.studentChecked){
+                        navigate("HomeScreen");
+                    }else {
+                        navigate("AdminScreen");
+                    }
+
+                    //userType = await AsyncStorage.getItem('@userType');
+                })();
+
                 break;
             default:
                 console.log("default", this.state.serverResponse)
