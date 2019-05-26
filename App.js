@@ -102,7 +102,7 @@ const BottomStack = createMaterialBottomTabNavigator(
             navigationOptions: {
                 tabBarIcon: ({tintColor, focused}) => (
                     <Icon
-                        name='star'
+                        name='youtube'
                         type='feather'
                         color={tintColor}
                         size={25}/>
