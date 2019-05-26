@@ -7,7 +7,7 @@ import {
     StyleSheet,
     Platform,
     TouchableOpacity,
-    ScrollView
+    ScrollView, AsyncStorage
 } from 'react-native';
 import CheckBoxGroup from '../elements/checkboxgroup'
 import {CheckBox, Icon} from "react-native-elements";
@@ -40,7 +40,8 @@ export default class Quiz extends React.Component {
             answerStatus: "",
             selected: false,
             checked: [false, false, false, false, false],
-            values: []
+            values: [],
+            userID: ''
 
         }
 
@@ -49,58 +50,78 @@ export default class Quiz extends React.Component {
 
     componentDidMount() {
 
-        const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/recommended/quiz`;
-        return fetch(URL)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                //let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-                for (var i = 0; i < responseJson.length; i++) {
-                    //adding questions to question array
-                    this.questions.push({
-                        qsId: responseJson[i].qs_id,
-                        qsChapter: responseJson[i].qs_chapter,
-                        qsTopic: responseJson[i].qs_topic,
-                        question: responseJson[i].question,
-                        options: [
-                            responseJson[i].options.op1,
-                            responseJson[i].options.op2,
-                            responseJson[i].options.op3,
-                            responseJson[i].options.op4,
-                            responseJson[i].options.op5
-                        ],
-                        answer: responseJson[i].answers,
-                        difficulty: responseJson[i].difficulty
+
+
+        (async () => {
+            await this.setUserID();
+
+            const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/recomand/${this.state.userID}`;
+
+            return fetch(URL)
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    //let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+                    for (var i = 0; i < responseJson.length; i++) {
+                        //adding questions to question array
+                        this.questions.push({
+                            qsId: responseJson[i].qs_id,
+                            qsChapter: responseJson[i].qs_chapter,
+                            qsTopic: responseJson[i].qs_topic,
+                            question: responseJson[i].question,
+                            options: [
+                                responseJson[i].options.op1,
+                                responseJson[i].options.op2,
+                                responseJson[i].options.op3,
+                                responseJson[i].options.op4,
+                                responseJson[i].options.op5
+                            ],
+                            answer: responseJson[i].answers,
+                            difficulty: responseJson[i].difficulty
+                        });
+
+                        console.log("questions length", this.questions.length);
+
+                        this.user_answers.push({qsId: responseJson[i].qs_id, answer: ' '});
+                        console.log("user answers length", this.user_answers.length);
+                        //console.log("qs id", responseJson[i].qs_id);
+                        //console.log("op1", responseJson[i].options.op1);
+                        //console.log("op2", responseJson[i].options.op2);
+                        //console.log("op3", responseJson[i].options.op3);
+                        //console.log("op4", responseJson[i].options.op4);
+
+
+                    }
+                    this.setState({
+                        isLoading: false,
+                        //ques: questions,
+                        //user_answers: user_answers,
+                    }, function () {
+
+                        //user_answers = [];
+                        //questions = [];
+
+
+                        //console.log("state.ques[0].question", this.questions[0].question);
                     });
-
-                    console.log("questions length", this.questions.length);
-
-                    this.user_answers.push({qsId: responseJson[i].qs_id, answer: ' '});
-                    console.log("user answers length", this.user_answers.length);
-                    //console.log("qs id", responseJson[i].qs_id);
-                    //console.log("op1", responseJson[i].options.op1);
-                    //console.log("op2", responseJson[i].options.op2);
-                    //console.log("op3", responseJson[i].options.op3);
-                    //console.log("op4", responseJson[i].options.op4);
-
-
-                }
-                this.setState({
-                    isLoading: false,
-                    //ques: questions,
-                    //user_answers: user_answers,
-                }, function () {
-
-                    //user_answers = [];
-                    //questions = [];
-
-
-                    //console.log("state.ques[0].question", this.questions[0].question);
+                })
+                .catch((error) => {
+                    console.error(error);
                 });
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        })();
+
+
+
+
     }
+
+    setUserID = async () => {
+
+        const userID = await AsyncStorage.getItem('@userID');
+
+        this.setState({
+            userID: userID
+        });
+    };
 
 
     /*
@@ -161,7 +182,7 @@ export default class Quiz extends React.Component {
 
     send_to_server = () => {
 
-        var json = {chapter_scores: this.getChapterScores(),wrong_qs: this.wrong_answers, total_qs: this.questions.length, total_correct_qs:this.questions.length-this.wrong_answers.length};
+        var json = {user_id: this.state.userID, chapter_scores: this.getChapterScores(),wrong_qs: this.wrong_answers, total_qs: this.questions.length, total_correct_qs:this.questions.length-this.wrong_answers.length};
         fetch(`http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/mixedquiz`, {
             method: 'POST',
             headers: {
@@ -292,6 +313,7 @@ export default class Quiz extends React.Component {
                         <Text style={styles.qsDesc}>{this.questions[this.state.qsIndex].question}</Text>
 
                         <CheckBoxGroup
+                            ref={component => this.checkGroup = component}
                             labels={this.qs_options}
                             uncheckAll={true}
                             onPress={(checked) => {
@@ -309,6 +331,7 @@ export default class Quiz extends React.Component {
                                 this.setState({
                                     checked: [false, false, false, false, false],
                                 });
+                                this.checkGroup.uncheckAll()
                             }
 
 
