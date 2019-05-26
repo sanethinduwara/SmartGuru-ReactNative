@@ -7,7 +7,7 @@ import {
   Linking,
   TouchableOpacity,
   FlatList,
-  ActivityIndicator
+  ActivityIndicator, AsyncStorage
 } from 'react-native';
 
 class YouTube extends React.Component {
@@ -16,7 +16,7 @@ class YouTube extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      source:''
+      source:'',
     }
   }
 
@@ -54,28 +54,45 @@ export default class RecommendedVideo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true
+      isLoading: true,
+      userID: ''
     }
   }
 
   componentDidMount() {
 
-    const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/youtubelinks`;
-    return fetch(URL)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          this.urls = responseJson;
-          //console.log("links", responseJson.toString());
-          this.setState({
-            isLoading: false,
-          }, function () {
+    (async () => {
+      await this.setUserID();
 
+      const URL = `http://smartguru-env.mfrzh7c8xs.us-east-1.elasticbeanstalk.com/youtubelinks/${this.state.userID}`;
+
+      return fetch(URL)
+          .then((response) => response.json())
+          .then((responseJson) => {
+            this.urls = responseJson;
+            //console.log("links", responseJson.toString());
+            this.setState({
+              isLoading: false,
+            }, function () {
+
+            });
+          })
+          .catch((error) => {
+            console.error(error);
           });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    })();
+
+
   }
+
+  setUserID = async () => {
+
+    const userID = await AsyncStorage.getItem('@userID');
+
+    this.setState({
+      userID: userID
+    });
+  };
 
   render() {
 
