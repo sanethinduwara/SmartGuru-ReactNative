@@ -5,7 +5,7 @@ import {
     WebView,
     Text,
     ActivityIndicator,
-    Linking, AsyncStorage
+    Linking, AsyncStorage, FlatList
 
 } from 'react-native';
 
@@ -81,7 +81,8 @@ export default class StackOverFlowRecommendations extends React.Component {
 
         return (
             <View style={styles.MainContainer}>
-                {this.state.isLoading ? <ActivityIndicator style={{flex: 1,justifyContent: 'center'}}/> : this.displayLinks()}
+                {this.state.isLoading ? <ActivityIndicator style={{flex: 1,justifyContent: 'center'}}/> :
+                    this.links==null?<Text style={{flex:1, justifyContent: 'center'}}>No Recommendations</Text>:this.displayLinks()}
             </View>
         );
     }
