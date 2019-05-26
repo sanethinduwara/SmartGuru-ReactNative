@@ -18,8 +18,12 @@ export default class CheckBoxGroup extends React.Component {
         //updateState = updateState.bind(this)
     }
 
-    updateChild = () => {
-        this.setState({checked: [false, false, false, false, false]})
+    uncheckAll = () => {
+        this.setState({
+            checked: [false, false, false, false, false],
+        })
+        this.checked = [false, false, false, false, false];
+        this.values = [];
     };
     get_values = () => {
 
