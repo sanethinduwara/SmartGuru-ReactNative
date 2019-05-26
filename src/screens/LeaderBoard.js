@@ -58,8 +58,8 @@ export default class LeaderBoard extends React.Component {
                         renderItem={({ item, index }) => (
                             <View style={styles.detailRow}>
                                 <Text style={[styles.rowCell, {width:'10%'}]}>{parseInt(index)+1}</Text>
-                                <Text style={[styles.rowCell, {width:'75%',borderLeftWidth:1, borderRightWidth:1, borderLeftColor:'#f3f3f3', borderRightColor:'#f3f3f3'}]}>{item[0]}</Text>
-                                <Text style={[styles.rowCell, {width:'10%'}]}>{item[1]}</Text>
+                                <Text style={[styles.rowCell, {width:'75%',borderLeftWidth:1, borderRightWidth:1, borderLeftColor:'#f3f3f3', borderRightColor:'#f3f3f3'}]}>{item[1]}</Text>
+                                <Text style={[styles.rowCell, {width:'10%'}]}>{item[0]}</Text>
                             </View>
                         )}
 
