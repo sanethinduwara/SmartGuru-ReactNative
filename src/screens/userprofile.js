@@ -7,7 +7,6 @@ import {
     Text,
     Image,
     Button,
-    processColor,
     ActivityIndicator, TouchableOpacity,
     AsyncStorage,
 
@@ -67,32 +66,6 @@ export default class UserProfile extends React.Component {
         }
     }
 
-    retrieveStoredData = async() => {
-        try {
-            //const uID = await AsyncStorage.getItem('@userID');
-            //const uName = await AsyncStorage.getItem('@username');
-            const uName = await AsyncStorage.getItem('@username');
-            console.log("user profile",uName);
-            const uID = await AsyncStorage.getItem('@userID');
-            console.log("user ID ",uID);
-
-            //value = JSON.parse(value);
-            //if (uName !== null) {
-            this.setState({
-                username:uName,
-                userID:parseInt(uID)
-            });
-            //}
-            //if (uID !== null) {
-            //this.setState({userID:value.userID});
-            //}
-
-            console.log("qw",value.userID)
-        } catch (error) {
-            // Error retrieving data
-        }
-    };
-
     componentDidMount() {
 
         (async () => {
@@ -151,35 +124,10 @@ export default class UserProfile extends React.Component {
                     isLoading:false,
                     selectedSlice: {label: this.keys[0],value: this.values[0]},
                 });
-
-
-                //this.keys = responseJson.scores;
-                //console.log("test 45 ", responseJson.scores)
-
             })
             .catch((error) => {
                 console.error(error);
             });
-    };
-
-
-    clearAll = async () => {
-        try {
-            await AsyncStorage.clear()
-        } catch(e) {
-            // clear error
-        }
-
-        console.log('Done.')
-    };
-
-    onLogOutClick = ()=>{
-        (async () => {
-            await this.clearAll();
-        })();
-
-        const {navigate} = this.props.navigation;
-        navigate("Login");
     };
 
     showIndications = (array) => {
