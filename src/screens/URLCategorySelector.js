@@ -15,7 +15,7 @@ export default class URLCategorySelector extends React.Component {
     render() {
         const {navigate} = this.props.navigation;
         return(
-            <View>
+            <View style={styles.container}>
                 <TouchableOpacity
                     style={styles.Button}
                     onPress={() => navigate("RecommendedVideo")}>
