@@ -7,7 +7,7 @@ import {
   Linking,
   TouchableOpacity,
   FlatList,
-  ActivityIndicator, AsyncStorage
+  ActivityIndicator, AsyncStorage, Text
 } from 'react-native';
 
 class YouTube extends React.Component {
@@ -100,7 +100,8 @@ export default class RecommendedVideo extends React.Component {
 
           <View style={styles.container}>
 
-            {this.state.isLoading?<ActivityIndicator style={{flex:1, justifyContent: 'center'}}/>:<FlatList
+            {this.state.isLoading?<ActivityIndicator style={{flex:1, justifyContent: 'center'}}/>:
+                this.urls==null?<Text style={{flex:1, justifyContent: 'center'}}>No Recommendations</Text>:<FlatList
                 data={this.urls}
                 renderItem={({ item }) => (
                     <View style={{alignItems: 'center'}}>
